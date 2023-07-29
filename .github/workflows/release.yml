@@ -3,19 +3,26 @@ name: Build and publish wheels
 on:
   workflow_dispatch:
     inputs:
+      package:
+        required: true
+        type: string
       version:
-        description: 'Release tag version'
         required: true
         type: string
-      description:
-        description: 'Release description'
+      python_version:
         required: true
         type: string
-      create-release:
-        description: 'Actually creates and publishes the release'
+  workflow_call:
+    inputs:
+      package:
         required: true
-        type: boolean
-        default: false
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
 
 jobs:
   validate-args:
@@ -23,11 +30,11 @@ jobs:
     steps:
       - name: Print input arguments
         run: echo "${{ toJSON(github.event.inputs) }}"
-        
+
       - uses: mukunku/tag-exists-action@v1.2.0
         id: check-tag
         with:
-          tag: ${{ inputs.version }}
+          tag: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
 
       - uses: nick-fields/assert-action@v1
         with:
@@ -53,14 +60,12 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: ${{ inputs.create-release }}
         with:
           files: /tmp/wheelhouse/*.whl
-          tag_name: ${{ inputs.version }}
-          body: ${{ inputs.description }}
+          tag_name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
+          body: ${{ inputs.package }} ${{ inputs.version }}
 
   update-pypi:
-    if: ${{ inputs.create-release }}
     needs: release
     runs-on: ubuntu-latest
     permissions:
@@ -81,7 +86,7 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Update PyPI
-        run: python ./scripts/generate_pypi_links.py ${{ inputs.version }}
+        run: python ./scripts/generate_pypi_links.py ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }} ${{ inputs.package }}
 
       - name: Commit and push
         uses: stefanzweifel/git-auto-commit-action@v4
