@@ -25,8 +25,8 @@ on:
         type: string
 
 jobs:
-  build_linux_armv7l:
-    name: Linux armv7l
+  build_docker:
+    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }}
     runs-on: ubuntu-latest
 
     steps:
@@ -38,6 +38,10 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Install required packages
+        run: |
+          pip install pyyaml
+
       - name: Get build strategy
         working-directory: packages/${{ inputs.package }}
         run: |
@@ -46,7 +50,7 @@ jobs:
       - uses: nick-fields/assert-action@v1
         with:
           expected: "dockerfile"
-          actual: $STRATEGY
+          actual: ${{ env.STRATEGY }}
           comparison: exact
 
       - name: Set up QEMU
@@ -64,7 +68,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: packages/${{ inputs.package }}
-          file: $DOCKERFILE
+          file: ${{ env.DOCKERFILE }}
           build-args: |
             PYTHON_VERSION=${{ inputs.python_version }}
             VERSION=${{ inputs.version }}
