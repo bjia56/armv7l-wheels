@@ -1,0 +1,88 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+
+jobs:
+  build_linux_armv7l:
+    name: Linux armv7l
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Get build strategy
+        working-directory: packages/${{ inputs.package }}
+        run: |
+          echo STRATEGY=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".strategy") >> $GITHUB_ENV
+
+      - uses: nick-fields/assert-action@v1
+        with:
+          expected: "dockerfile"
+          actual: $STRATEGY
+          comparison: exact
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Get Dockerfile location
+        working-directory: packages/${{ inputs.package }}
+        run: |
+          echo DOCKERFILE=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".source") >> $GITHUB_ENV
+
+      - name: Build wheels via Docker
+        working-directory: packages/${{ inputs.package }}
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: $DOCKERFILE
+          build-args: |
+            PYTHON_VERSION=${{ inputs.python_version }}
+            VERSION=${{ inputs.version }}
+          push: false
+          platforms: linux/armhf
+          tags: armv7l:latest
+          load: true
+          cache-from: type=gha,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}
+          cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}
+
+      - name: Extract output
+        run: |
+          docker run -v /tmp/output:/host armv7l:latest bash -c "cp /export/* /host/"
+          tar -zcvf /tmp/output.tar.gz /tmp/output
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: /tmp/output/*.whl

@@ -1,0 +1,87 @@
+name: Build and publish wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag version'
+        required: true
+        type: string
+      description:
+        description: 'Release description'
+        required: true
+        type: string
+      create-release:
+        description: 'Actually creates and publishes the release'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  validate-args:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print input arguments
+        run: echo "${{ toJSON(github.event.inputs) }}"
+        
+      - uses: mukunku/tag-exists-action@v1.2.0
+        id: check-tag
+        with:
+          tag: ${{ inputs.version }}
+
+      - uses: nick-fields/assert-action@v1
+        with:
+          expected: "false"
+          actual: "${{ steps.check-tag.outputs.exists }}"
+          comparison: exact
+
+  build:
+    needs: validate-args
+    uses: ./.github/workflows/build_wheel.yml
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels
+          path: /tmp/wheelhouse/
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: ${{ inputs.create-release }}
+        with:
+          files: /tmp/wheelhouse/*.whl
+          tag_name: ${{ inputs.version }}
+          body: ${{ inputs.description }}
+
+  update-pypi:
+    if: ${{ inputs.create-release }}
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Update PyPI
+        run: python ./scripts/generate_pypi_links.py ${{ inputs.version }}
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v4

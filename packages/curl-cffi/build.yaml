@@ -1,0 +1,9 @@
+strategy: dockerfile
+source: ./Dockerfile
+
+python:
+  versions: [3.9]
+
+package:
+  versions:
+  - 0.5.7
