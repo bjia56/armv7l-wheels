@@ -1,0 +1,72 @@
+name: Build via PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Install required packages
+        run: |
+          pip install pyyaml
+
+      - name: Get build strategy
+        working-directory: packages/${{ inputs.package }}
+        run: |
+          echo STRATEGY=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".strategy") >> $GITHUB_ENV
+
+      - uses: nick-fields/assert-action@v1
+        with:
+          expected: "pypi"
+          actual: ${{ env.STRATEGY }}
+          comparison: exact
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Run build
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/bjia56/armv7l-wheel-builder:main
+          options: -v ${{ github.workspace }}:/work -v /tmp/output:/export --workdir /work
+          run: |
+            python${{ inputs.python_version }} -m pip wheel ${{ inputs.package }}==${{ inputs.version }}
+            cp ${{ inputs.package }}*armv7l.whl /export
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: /tmp/output/*.whl
