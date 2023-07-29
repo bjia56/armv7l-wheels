@@ -1,6 +1,7 @@
 FROM ghcr.io/bjia56/armv7l-wheel-builder:main
 ARG PYTHON_VERSION
 ARG VERSION
+ARG OUTPUT_DIR
 
 RUN yum install -y libcurl-devel
 
@@ -30,5 +31,5 @@ RUN git clone https://github.com/yifeikong/curl_cffi.git && \
 WORKDIR /curl_cffi
 RUN LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH /repo/armv7l_build_wheels.sh ${PYTHON_VERSION}
 
-RUN mkdir /export && \
-    cp build${PYTHON_VERSION}/wheelhouse/*abi3*armv7l.whl /export
+RUN mkdir -p ${OUTPUT_DIR} && \
+    cp build${PYTHON_VERSION}/wheelhouse/*abi3*armv7l.whl ${OUTPUT_DIR}
