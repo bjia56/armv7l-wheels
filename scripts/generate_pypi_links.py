@@ -9,15 +9,13 @@ import requests
 import sys
 from urllib.parse import urlparse
 
+from normalize import normalize
+
 
 INDEX_FILE = "index.html"
 CWD = pathlib.Path(__file__).parent.resolve()
 PYPI_DIR = os.path.join(pathlib.Path(CWD).parent.resolve(), "pypi")
 
-
-def normalize(name: str) -> str:
-    """ From PEP503 : https://www.python.org/dev/peps/pep-0503/ """
-    return re.sub(r"[-_.]+", "-", name).lower()
 
 
 def package_exists(soup, package_name):

@@ -64,7 +64,8 @@ jobs:
           run: |
             set -x
             python${{ inputs.python_version }} -m pip wheel ${{ inputs.package }}==${{ inputs.version }}
-            cp ${{ inputs.package }}*armv7l.whl /export
+            auditwheel repair ${{ inputs.package }}*armv7l.whl
+            cp ${{ inputs.package }}*manylinux*armv7l.whl /export
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

@@ -6,7 +6,7 @@ import re
 from typing import List, TypedDict
 import yaml
 
-from generate_pypi_links import normalize
+from normalize import normalize
 
 
 CWD = pathlib.Path(__file__).parent.resolve()

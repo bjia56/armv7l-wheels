@@ -32,4 +32,4 @@ WORKDIR /curl_cffi
 RUN LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH /repo/armv7l_build_wheels.sh ${PYTHON_VERSION}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
-    cp build${PYTHON_VERSION}/wheelhouse/*abi3*armv7l.whl ${OUTPUT_DIR}
+    cp build${PYTHON_VERSION}/wheelhouse/curl_cffi*manylinux*armv7l.whl ${OUTPUT_DIR}

@@ -14,14 +14,14 @@ build_wheel() (
 test_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    pip$PY_VER install *abi3*armv7l.whl
+    pip$PY_VER install curl_cffi*manylinux*armv7l.whl
     python$PY_VER -c "import curl_cffi; print(curl_cffi)"
 )
 
 repair_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    auditwheel repair *abi3*armv7l.whl
+    auditwheel repair curl_cffi*armv7l.whl
 )
 
 build_wheel $PYTHON3_VERSION
