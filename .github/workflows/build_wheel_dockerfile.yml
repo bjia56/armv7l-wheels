@@ -68,7 +68,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: packages/${{ inputs.package }}
-          file: ${{ env.DOCKERFILE }}
+          file: packages/${{ inputs.package}}/${{ env.DOCKERFILE }}
           build-args: |
             PYTHON_VERSION=${{ inputs.python_version }}
             VERSION=${{ inputs.version }}
