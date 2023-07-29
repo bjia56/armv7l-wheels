@@ -61,10 +61,9 @@ jobs:
           echo DOCKERFILE=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".source") >> $GITHUB_ENV
 
       - name: Build wheels via Docker
-        working-directory: packages/${{ inputs.package }}
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: packages/${{ inputs.package }}
           file: $DOCKERFILE
           build-args: |
             PYTHON_VERSION=${{ inputs.python_version }}
