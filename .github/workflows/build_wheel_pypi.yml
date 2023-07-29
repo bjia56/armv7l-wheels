@@ -60,8 +60,9 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ghcr.io/bjia56/armv7l-wheel-builder:main
-          options: -v ${{ github.workspace }}:/work -v /tmp/output:/export --workdir /work
+          options: --platform linux/arm/v7 -v ${{ github.workspace }}:/work -v /tmp/output:/export --workdir /work
           run: |
+            set -x
             python${{ inputs.python_version }} -m pip wheel ${{ inputs.package }}==${{ inputs.version }}
             cp ${{ inputs.package }}*armv7l.whl /export
 
