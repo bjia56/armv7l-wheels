@@ -12,6 +12,9 @@ on:
       python_version:
         required: true
         type: string
+      strategy:
+        required: true
+        type: string
   workflow_call:
     inputs:
       package:
@@ -21,6 +24,9 @@ on:
         required: true
         type: string
       python_version:
+        required: true
+        type: string
+      strategy:
         required: true
         type: string
 
@@ -44,7 +50,7 @@ jobs:
 
   build:
     needs: validate-args
-    uses: ./.github/workflows/build_wheel.yml
+    uses: ./.github/workflows/build_wheel_${{ inputs.strategy }}.yml
 
   release:
     needs: build
