@@ -87,5 +87,5 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: wheels
+          name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
           path: /tmp/output/*.whl

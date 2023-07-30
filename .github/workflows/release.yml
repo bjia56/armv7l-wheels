@@ -76,7 +76,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: wheels
+          name: ${{ inputs.package }}-${{ inputs.version}}-cpython${{ inputs.python_version }}
           path: /tmp/wheelhouse/
 
       - name: Release
