@@ -27,11 +27,7 @@ jobs:
         id: gen_matrix
         run: |
           echo "::set-output name=matrix::$(python3 scripts/generate_build_matrix.py)"
-
-      - name: Get matrix length
-        id: gen_matrix
-        run: |
-          echo "::set-output name=matrix_len::$(echo '${{ steps.gen_matrix.outputs.matrix }}' | jq '. | ')"
+          echo "::set-output name=matrix_len::$(python3 scripts/generate_build_matrix.py | jq '. | len')"
 
     outputs:
       build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
