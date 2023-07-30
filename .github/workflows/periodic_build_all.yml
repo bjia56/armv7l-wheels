@@ -21,7 +21,7 @@ jobs:
 
       - name: Install required packages
         run: |
-          pip install pyyaml
+          pip install pyyaml requests
 
       - name: Generate matrix
         id: gen_matrix
