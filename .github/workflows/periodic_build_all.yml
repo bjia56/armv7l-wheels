@@ -36,6 +36,8 @@ jobs:
     strategy:
       matrix:
         build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
+    permissions:
+      contents: write
     uses: ./.github/workflows/release.yml
     with:
       package: ${{ matrix.build_params['package'] }}
