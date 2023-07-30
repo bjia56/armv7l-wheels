@@ -36,7 +36,7 @@ jobs:
     strategy:
       matrix:
         build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
-    uses: ./.github/workflows/build_wheel_dockerfile.yml
+    uses: ./.github/workflows/release.yml
     with:
       package: ${{ matrix.build_params['package'] }}
       version: ${{ matrix.build_params['version'] }}
