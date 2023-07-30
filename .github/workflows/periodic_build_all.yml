@@ -28,11 +28,18 @@ jobs:
         run: |
           echo "::set-output name=matrix::$(python3 scripts/generate_build_matrix.py)"
 
+      - name: Get matrix length
+        id: gen_matrix
+        run: |
+          echo "::set-output name=matrix_len::$(echo '${{ steps.gen_matrix.outputs.matrix }}' | jq '. | ')"
+
     outputs:
       build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
+      build_matrix_: ${{ steps.gen_matrix.outputs.matrix_len }}
 
   build_matrix:
     needs: generate_matrix
+    if: ${{ needs.generate_matrix.outputs.build_matrix_len > 0 }}
     strategy:
       matrix:
         build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
