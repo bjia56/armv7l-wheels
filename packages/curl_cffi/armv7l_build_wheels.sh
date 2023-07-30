@@ -14,7 +14,7 @@ build_wheel() (
 test_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    pip$PY_VER install curl_cffi*manylinux*armv7l.whl
+    pip$PY_VER install wheelhouse/curl_cffi*manylinux*armv7l.whl
     python$PY_VER -c "import curl_cffi; print(curl_cffi)"
 )
 
