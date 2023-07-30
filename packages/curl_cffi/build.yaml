@@ -2,7 +2,7 @@ strategy: dockerfile
 source: ./Dockerfile
 
 python:
-  versions: [3.9]
+  versions: ["3.9"]
 
 package:
   versions:
