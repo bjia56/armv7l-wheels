@@ -63,7 +63,7 @@ jobs:
           options: --platform linux/arm/v7 -v ${{ github.workspace }}:/work -v /tmp/output:/export --workdir /work
           run: |
             set -x
-            python${{ inputs.python_version }} -m pip wheel ${{ inputs.package }}==${{ inputs.version }}
+            python${{ inputs.python_version }} -m pip wheel --no-deps ${{ inputs.package }}==${{ inputs.version }}
             auditwheel repair ${{ inputs.package }}*armv7l.whl
             cp wheelhouse/${{ inputs.package }}*manylinux*armv7l.whl /export
 
