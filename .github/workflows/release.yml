@@ -50,7 +50,7 @@ jobs:
 
   build_dockerfile:
     needs: validate-args
-    if: ${{ inputs.strategy }} == 'dockerfile'
+    if: ${{ inputs.strategy == 'dockerfile' }}
     uses: ./.github/workflows/build_wheel_dockerfile.yml
     with:
       package: ${{ inputs.package }}
@@ -59,7 +59,7 @@ jobs:
 
   build_pypi:
     needs: validate-args
-    if: ${{ inputs.strategy }} == 'pypi'
+    if: ${{ inputs.strategy == 'pypi' }}
     uses: ./.github/workflows/build_wheel_pypi.yml
     with:
       package: ${{ inputs.package }}
