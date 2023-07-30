@@ -46,3 +46,4 @@ jobs:
       version: ${{ matrix.build_params['version'] }}
       python_version: ${{ matrix.build_params['python_version'] }}
       strategy: ${{ matrix.build_params['strategy'] }}
+    secrets: inherit
