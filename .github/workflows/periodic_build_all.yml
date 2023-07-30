@@ -1,0 +1,44 @@
+name: Periodic build all
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  generate_matrix:
+    name: Generate job matrix
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Install required packages
+        run: |
+          pip install pyyaml
+
+      - name: Generate matrix
+        id: gen_matrix
+        run: |
+          echo "::set-output name=matrix::$(python3 scripts/generate_build_matrix.py)"
+
+    outputs:
+      build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
+
+  build_matrix:
+    needs: generate_matrix
+    strategy:
+      matrix:
+        build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
+    uses: ./.github/workflows/build_wheel_dockerfile.yml
+    with:
+      package: ${{ matrix.build_params['package'] }}
+      version: ${{ matrix.build_params['version'] }}
+      python_version: ${{ matrix.build_params['python_version'] }}
+      strategy: ${{ matrix.build_params['strategy'] }}
