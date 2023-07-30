@@ -30,11 +30,12 @@ class BuildSpec(TypedDict):
 
 
 def get_packages() -> List[str]:
-    return [
+    packages = [
         f
         for f in os.listdir(PACKAGES_DIR)
         if os.path.isdir(os.path.join(PACKAGES_DIR, f))
     ]
+    return sorted(packages)
 
 
 def load_buildspec(package: str) -> BuildSpec:
