@@ -4,11 +4,12 @@ ARG VERSION
 ARG OUTPUT_DIR
 
 WORKDIR /
-RUN git clone https://github.com/google/crc32c.git && \
-    mkdir /tmp/vendor && \
-    cd crc32c && \
+RUN git clone https://github.com/googleapis/python-crc32c.git && \
+    cd python-crc32c && \
     git submodule update --init --recursive && \
-    git checkout 02e65f4fd3065d27b2e29324800ca6d04df16126 && \
+    git checkout v${VERSION} && \
+    mkdir /tmp/vendor && \
+    cd google_crc32c && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCRC32C_BUILD_TESTS=no -DCRC32C_BUILD_BENCHMARKS=no -DBUILD_SHARED_LIBS=yes -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_PREFIX=/tmp/vendor .. && \
