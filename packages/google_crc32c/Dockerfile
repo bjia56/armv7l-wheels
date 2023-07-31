@@ -28,4 +28,4 @@ WORKDIR /google_crc32c
 RUN /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
-    cp build${PYTHON_VERSION}/wheelhouse/curl_cffi*manylinux*armv7l.whl ${OUTPUT_DIR}
+    cp build${PYTHON_VERSION}/wheelhouse/google_crc32c*manylinux*armv7l.whl ${OUTPUT_DIR}
