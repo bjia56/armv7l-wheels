@@ -31,7 +31,7 @@ jobs:
 
     outputs:
       build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
-      build_matrix_: ${{ steps.gen_matrix.outputs.matrix_len }}
+      build_matrix_len: ${{ steps.gen_matrix.outputs.matrix_len }}
 
   build_matrix:
     needs: generate_matrix
