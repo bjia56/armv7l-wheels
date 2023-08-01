@@ -35,7 +35,7 @@ jobs:
 
   build_matrix:
     needs: generate_matrix
-    if: ${{ needs.generate_matrix.outputs.build_matrix_len > 0 }}
+    if: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix_len) > 0 }}
     strategy:
       matrix:
         build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
