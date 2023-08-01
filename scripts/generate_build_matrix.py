@@ -94,7 +94,7 @@ def main() -> None:
                     }
                 )
 
-    print(json.dumps(matrix_list))
+    print(json.dumps(matrix_list[:50]))
 
 
 if __name__ == "__main__":
