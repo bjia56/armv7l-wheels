@@ -20,7 +20,7 @@ RUN git clone https://github.com/googleapis/python-crc32c.git && \
 ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include'
 ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib'
 ENV LD_LIBRARY_PATH=/tmp/vendor/lib:/usr/local/ssl/lib:$LD_LIBRARY_PATH
-ENV PKG_CONFIG_PATH=/tmp/vendor/lib/pkgconfig:/usr/local/ssl/pkgconfig
+ENV PKG_CONFIG_PATH=/tmp/vendor/lib/pkgconfig:/usr/local/ssl/lib/pkgconfig
 
 COPY . /repo
 
