@@ -113,7 +113,6 @@ jobs:
           push: false
           platforms: linux/armhf
           tags: armv7l:latest
-          load: true
           cache-from: type=gha,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}
           cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}
           outputs: type=docker,dest=/tmp/stage.tar
@@ -124,6 +123,12 @@ jobs:
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
           path: /tmp/stage.tar
+
+      - name: Load image
+        if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
+        run: |
+          docker load --input /tmp/stage.tar
+          docker image ls -a
 
       - name: Extract output
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
