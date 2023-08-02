@@ -63,6 +63,18 @@ jobs:
           options: --platform linux/arm/v7 -v ${{ github.workspace }}:/work -v /tmp/output:/export --workdir /work
           run: |
             set -x
+
+            # these env vars allows compilation to find local openssl
+            export CFLAGS='-I/usr/local/ssl/include'
+            export LDFLAGS='-L/usr/local/ssl/lib'
+            export LD_LIBRARY_PATH=/usr/local/ssl/lib:$LD_LIBRARY_PATH
+            export PKG_CONFIG_PATH=/usr/local/ssl/lib/pkgconfig
+
+            # these env vars set the gcc toolchain to devtoolset-10
+            export CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+            export CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+            export LD=/opt/rh/devtoolset-10/root/usr/bin/g++
+
             python${{ inputs.python_version }} -m pip wheel --no-deps ${{ inputs.package }}==${{ inputs.version }}
             auditwheel repair ${{ inputs.package }}*armv7l.whl
             cp wheelhouse/${{ inputs.package }}*manylinux*armv7l.whl /export
