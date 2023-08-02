@@ -56,7 +56,7 @@ jobs:
       build_matrix_last: ${{ steps.gen_matrix.outputs.matrix_last }}
 
   build:
-    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }}
+    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }} ${{ needs.calculate_matrix.outputs.build_matrix_last == 0 && '' || matrix.build_params['key'] }}
     runs-on: ubuntu-latest
     needs: calculate_matrix
     strategy:
