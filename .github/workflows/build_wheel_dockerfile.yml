@@ -48,8 +48,8 @@ jobs:
         id: gen_matrix
         working-directory: packages/${{ inputs.package }}
         run: |
-          echo "::set-output name=matrix::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0]'
-          echo "::set-output name=matrix_last::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0] | length - 1'
+          echo "::set-output name=matrix::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0]')
+          echo "::set-output name=matrix_last::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0] | length - 1')
 
     outputs:
       build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
