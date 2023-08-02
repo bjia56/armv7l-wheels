@@ -33,19 +33,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.9'
-
-      - name: Install required packages
-        run: |
-          pip install pyyaml
-
       - name: Get build strategy
         working-directory: packages/${{ inputs.package }}
         run: |
-          echo STRATEGY=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".strategy") >> $GITHUB_ENV
+          echo STRATEGY=$(cat build.yaml | yq .strategy) >> $GITHUB_ENV
 
       - uses: nick-fields/assert-action@v1
         with:
@@ -62,7 +53,7 @@ jobs:
       - name: Get Dockerfile location
         working-directory: packages/${{ inputs.package }}
         run: |
-          echo DOCKERFILE=$(cat build.yaml | python3 -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq -r ".source") >> $GITHUB_ENV
+          echo DOCKERFILE=$(cat build.yaml | yq .source) >> $GITHUB_ENV
 
       - name: Build wheels via Docker
         uses: docker/build-push-action@v3
