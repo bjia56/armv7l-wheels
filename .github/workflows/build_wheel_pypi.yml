@@ -69,7 +69,7 @@ jobs:
             python${{ inputs.python_version }} -m pip wheel --no-deps ${{ inputs.package }}==${{ inputs.version }}
             auditwheel repair ${{ inputs.package }}*armv7l.whl
 
-            python${{ inputs.python_version }} -m pip install wheelhouse/${{ inputs.package }}*manylinux*armv7l.whl
+            python${{ inputs.python_version }} -m pip install wheelhouse/${{ inputs.package }}*manylinux*armv7l.whl --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
             python${{ inputs.python_version }} -c 'import ${{ inputs.package }}; print(${{ inputs.package }})'
             cp wheelhouse/${{ inputs.package }}*manylinux*armv7l.whl /export
 
