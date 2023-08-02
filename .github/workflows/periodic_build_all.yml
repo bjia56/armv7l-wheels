@@ -26,6 +26,7 @@ jobs:
       - name: Generate matrix
         id: gen_matrix
         run: |
+          set -x
           echo "::set-output name=matrix::$(python3 scripts/generate_build_matrix.py)"
           echo "::set-output name=matrix_len::$(python3 scripts/generate_build_matrix.py | jq length)"
 
