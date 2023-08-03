@@ -27,7 +27,7 @@ class BuildSpec(TypedDict):
     source: str | List[str] | None
     python: PythonSpec
     package: PackageSpec
-    disable: bool
+    disable: bool | None
 
 
 def get_packages() -> List[str]:
@@ -77,7 +77,7 @@ def main() -> None:
     matrix_list = []
     for package in packages:
         buildspec = load_buildspec(package)
-        if buildspec["disable"]:
+        if buildspec.get("disable"):
             continue
 
         python_versions = get_python_versions(package, buildspec)
