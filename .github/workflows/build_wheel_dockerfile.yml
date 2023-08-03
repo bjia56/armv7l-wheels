@@ -81,11 +81,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Calculate previous build number
+        if: ${{ matrix.build_params['key'] != 0 }}
+        run: |
+          echo "PREVIOUS=$((${{ matrix.build_params['key'] }} - 1))" >> $GITHUB_ENV
+
       - name: Download artifact
         uses: actions/download-artifact@v3
         if: ${{ matrix.build_params['key'] != 0 }}
         with:
-          name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
+          name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ env.PREVIOUS }}
           path: /tmp
 
       - name: Load image
