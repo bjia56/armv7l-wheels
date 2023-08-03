@@ -1,0 +1,78 @@
+diff --git a/patches/vpx.patch b/patches/vpx.patch
+index 94644ea..3e75409 100644
+--- a/patches/vpx.patch
++++ b/patches/vpx.patch
+@@ -12,7 +12,7 @@
+ @@ -336,6 +336,20 @@
+          $$(filter %.o,$$^) $$(extralibs) $$(EXPORTS_FILE)
+  endef
+- 
++
+ +define dll_gnu_template
+ +# Not using a pattern rule here because we don't want to generate empty
+ +# archives when they are listed as a dependency in files not responsible
+@@ -27,7 +27,7 @@
+ +            -Wl,--out-implib=$$(subst $(2),.dll.a,$(1)) $$(filter %.o,$$^) $$(extralibs)
+ +endef
+ +
+- 
++
+  #
+  # Get current configuration
+ @@ -395,6 +409,7 @@
+@@ -35,7 +35,7 @@
+  $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dylib,$(LIBS)),$(eval $(call dl_template,$(lib))))
+  $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dll,$(LIBS)),$(eval $(call dll_template,$(lib))))
+ +$(foreach lib,$(filter %-$(VERSION_MAJOR).dll,$(LIBS)),$(eval $(call dll_gnu_template,$(lib),-$(VERSION_MAJOR).dll)))
+- 
++
+  INSTALL-LIBS=$(call cond_enabled,CONFIG_INSTALL_LIBS,INSTALL-LIBS)
+  ifeq ($(MAKECMDGOALS),dist)
+ --- libvpx-1.11.0.orig/build/make/configure.sh  	2021-10-06 19:41:19.000000000 +0200
+@@ -65,8 +65,17 @@
+ +    die "Bindir ${bindir} must be a subdirectory of ${prefix}"
+ +  fi
+  }
+- 
++
+  post_process_cmdline() {
++@@ -748,7 +748,7 @@
++       aarch64*)
++         tgt_isa=arm64
++         ;;
++-      armv7*-hardfloat* | armv7*-gnueabihf | arm-*-gnueabihf)
+++      armv7*-hardfloat* | armv7h* | armv7*-gnueabihf | arm-*-gnueabihf)
++         tgt_isa=armv7
++         float_abi=hard
++         ;;
+ --- libvpx-1.11.0.orig/configure	2021-10-06 19:41:19.000000000 +0200
+ +++ libvpx-1.11.0/configure         2022-03-29 19:54:58.000000000 +0200
+ @@ -501,6 +501,7 @@
+@@ -74,9 +83,9 @@
+  endif
+  LIBSUBDIR=${libdir##${prefix}/}
+ +BINSUBDIR=${bindir##${prefix}/}
+- 
++
+  VERSION_STRING=${VERSION_STRING}
+- 
++
+ @@ -539,6 +540,8 @@
+          *)
+              if enabled gnu; then
+@@ -115,13 +124,13 @@
+  endif
+  endif
+ +endif
+- 
++
+  LIBS-$(CONFIG_SHARED) += $(BUILD_PFX)$(LIBVPX_SO)\
+                             $(notdir $(LIBVPX_SO_SYMLINKS)) \
+ @@ -353,6 +362,10 @@ libvpx_dll.a: $(LIBVPX_SO)
+  	$(qexec)emximp -o $@ $<
+  CLEAN-OBJS += libvpx_dll.a
+- 
++
+ +libvpx.dll.a: $(LIBVPX_SO)
+ +	@echo "    [IMPLIB] $@"
+ +CLEAN-OBJS += libvpx.dll.a

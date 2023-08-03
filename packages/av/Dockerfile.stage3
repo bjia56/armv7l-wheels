@@ -1,0 +1,8 @@
+FROM base
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
+
+WORKDIR pyav-ffmpeg
+RUN python3.8 scripts/build-ffmpeg.py /tmp/vendor 3
+WORKDIR ..

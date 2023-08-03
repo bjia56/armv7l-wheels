@@ -1,0 +1,341 @@
+diff --git a/patches/harfbuzz.patch b/patches/harfbuzz.patch
+index a07fcae..4506e74 100644
+--- a/patches/harfbuzz.patch
++++ b/patches/harfbuzz.patch
+@@ -10,3 +10,336 @@ diff -urN harfbuzz-4.1.0.orig/configure harfbuzz-4.1.0/configure
+  	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking pkg-config is at least version $_pkg_min_version" >&5
+  $as_echo_n "checking pkg-config is at least version $_pkg_min_version... " >&6; }
+  	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
++diff -urN harfbuzz-4.1.0.orig/src/hb-meta.hh harfbuzz-4.1.0/src/hb-meta.hh
++--- harfbuzz-4.1.0.orig/src/hb-meta.hh	2022-12-24 21:45:13.514638000 -0500
+++++ harfbuzz-4.1.0/src/hb-meta.hh	2022-12-24 21:53:21.921867000 -0500
++@@ -188,6 +188,17 @@
++ template <> struct hb_int_max<unsigned long long>	: hb_integral_constant<unsigned long long,	ULLONG_MAX>	{};
++ #define hb_int_max(T) hb_int_max<T>::value
++ 
+++#if __GNUG__ && __GNUC__ < 5
+++#define hb_is_trivially_copyable(T) __has_trivial_copy(T)
+++#define hb_is_trivially_copy_assignable(T) (__has_trivial_copy(T) && __has_trivial_assign(T))
+++#define hb_is_trivially_constructible(T) __has_trivial_constructor(T)
+++#define hb_is_trivially_destructible(T) __has_trivial_destructor(T)
+++#else
+++#define hb_is_trivially_copyable(T) std::is_trivially_copyable<T>::value
+++#define hb_is_trivially_copy_assignable(T) std::is_trivially_copy_assignable<T>::value
+++#define hb_is_trivially_constructible(T) std::is_trivially_constructible<T>::value
+++#define hb_is_trivially_destructible(T) std::is_trivially_destructible<T>::value
+++#endif
++ 
++ /* Class traits. */
++ 
++diff -urN harfbuzz-4.1.0.orig/src/hb-open-type.hh harfbuzz-4.1.0/src/hb-open-type.hh
++--- harfbuzz-4.1.0.orig/src/hb-open-type.hh	2022-12-24 21:45:13.514638000 -0500
+++++ harfbuzz-4.1.0/src/hb-open-type.hh	2022-12-24 21:53:21.921867000 -0500
++@@ -33,6 +33,7 @@
++ #include "hb-blob.hh"
++ #include "hb-face.hh"
++ #include "hb-machinery.hh"
+++#include "hb-meta.hh"
++ #include "hb-subset.hh"
++ 
++ 
++@@ -518,7 +519,7 @@
++   {
++     TRACE_SANITIZE (this);
++     if (unlikely (!sanitize_shallow (c, count))) return_trace (false);
++-    if (!sizeof... (Ts) && std::is_trivially_copyable<Type>::value) return_trace (true);
+++    if (!sizeof... (Ts) && hb_is_trivially_copyable(Type)) return_trace (true);
++     for (unsigned int i = 0; i < count; i++)
++       if (unlikely (!c->dispatch (arrayZ[i], std::forward<Ts> (ds)...)))
++ 	return_trace (false);
++@@ -707,7 +708,7 @@
++   {
++     TRACE_SANITIZE (this);
++     if (unlikely (!sanitize_shallow (c))) return_trace (false);
++-    if (!sizeof... (Ts) && std::is_trivially_copyable<Type>::value) return_trace (true);
+++    if (!sizeof... (Ts) && hb_is_trivially_copyable(Type)) return_trace (true);
++     unsigned int count = len;
++     for (unsigned int i = 0; i < count; i++)
++       if (unlikely (!c->dispatch (arrayZ[i], std::forward<Ts> (ds)...)))
++@@ -835,7 +836,7 @@
++   {
++     TRACE_SANITIZE (this);
++     if (unlikely (!sanitize_shallow (c))) return_trace (false);
++-    if (!sizeof... (Ts) && std::is_trivially_copyable<Type>::value) return_trace (true);
+++    if (!sizeof... (Ts) && hb_is_trivially_copyable(Type)) return_trace (true);
++     unsigned int count = get_length ();
++     for (unsigned int i = 0; i < count; i++)
++       if (unlikely (!c->dispatch (arrayZ[i], std::forward<Ts> (ds)...)))
++@@ -884,7 +885,7 @@
++   {
++     TRACE_SANITIZE (this);
++     if (unlikely (!sanitize_shallow (c))) return_trace (false);
++-    if (!sizeof... (Ts) && std::is_trivially_copyable<Type>::value) return_trace (true);
+++    if (!sizeof... (Ts) && hb_is_trivially_copyable(Type)) return_trace (true);
++     unsigned int count = lenM1 + 1;
++     for (unsigned int i = 0; i < count; i++)
++       if (unlikely (!c->dispatch (arrayZ[i], std::forward<Ts> (ds)...)))
++@@ -1070,7 +1071,7 @@
++   {
++     TRACE_SANITIZE (this);
++     if (unlikely (!sanitize_shallow (c))) return_trace (false);
++-    if (!sizeof... (Ts) && std::is_trivially_copyable<Type>::value) return_trace (true);
+++    if (!sizeof... (Ts) && hb_is_trivially_copyable(Type)) return_trace (true);
++     unsigned int count = get_length ();
++     for (unsigned int i = 0; i < count; i++)
++       if (unlikely (!(*this)[i].sanitize (c, std::forward<Ts> (ds)...)))
++diff -urN harfbuzz-4.1.0.orig/src/hb-vector.hh harfbuzz-4.1.0/src/hb-vector.hh
++--- harfbuzz-4.1.0.orig/src/hb-vector.hh	2022-12-24 21:45:13.524638000 -0500
+++++ harfbuzz-4.1.0/src/hb-vector.hh	2022-12-24 21:53:21.921867000 -0500
++@@ -29,6 +29,7 @@
++ 
++ #include "hb.hh"
++ #include "hb-array.hh"
+++#include "hb-meta.hh"
++ #include "hb-null.hh"
++ 
++ 
++@@ -203,14 +204,14 @@
++   bool in_error () const { return allocated < 0; }
++ 
++   template <typename T = Type,
++-	    hb_enable_if (std::is_trivially_copy_assignable<T>::value)>
+++	    hb_enable_if (hb_is_trivially_copy_assignable(T))>
++   Type *
++   realloc_vector (unsigned new_allocated)
++   {
++     return (Type *) hb_realloc (arrayZ, new_allocated * sizeof (Type));
++   }
++   template <typename T = Type,
++-	    hb_enable_if (!std::is_trivially_copy_assignable<T>::value)>
+++	    hb_enable_if (!hb_is_trivially_copy_assignable(T))>
++   Type *
++   realloc_vector (unsigned new_allocated)
++   {
++@@ -230,7 +231,7 @@
++   }
++ 
++   template <typename T = Type,
++-	    hb_enable_if (std::is_trivially_constructible<T>::value ||
+++	    hb_enable_if (hb_is_trivially_constructible(T) ||
++ 			  !std::is_default_constructible<T>::value)>
++   void
++   grow_vector (unsigned size)
++@@ -239,7 +240,7 @@
++     length = size;
++   }
++   template <typename T = Type,
++-	    hb_enable_if (!std::is_trivially_constructible<T>::value &&
+++	    hb_enable_if (!hb_is_trivially_constructible(T) &&
++ 			   std::is_default_constructible<T>::value)>
++   void
++   grow_vector (unsigned size)
++@@ -252,14 +253,14 @@
++   }
++ 
++   template <typename T = Type,
++-	    hb_enable_if (std::is_trivially_destructible<T>::value)>
+++	    hb_enable_if (hb_is_trivially_destructible(T))>
++   void
++   shrink_vector (unsigned size)
++   {
++     length = size;
++   }
++   template <typename T = Type,
++-	    hb_enable_if (!std::is_trivially_destructible<T>::value)>
+++	    hb_enable_if (!hb_is_trivially_destructible(T))>
++   void
++   shrink_vector (unsigned size)
++   {
++@@ -271,7 +272,7 @@
++   }
++ 
++   template <typename T = Type,
++-	    hb_enable_if (std::is_trivially_copy_assignable<T>::value)>
+++	    hb_enable_if (hb_is_trivially_copy_assignable(T))>
++   void
++   shift_down_vector (unsigned i)
++   {
++@@ -280,7 +281,7 @@
++ 	     (length - i) * sizeof (Type));
++   }
++   template <typename T = Type,
++-	    hb_enable_if (!std::is_trivially_copy_assignable<T>::value)>
+++	    hb_enable_if (!hb_is_trivially_copy_assignable(T))>
++   void
++   shift_down_vector (unsigned i)
++   {
++diff -urN harfbuzz-4.1.0.orig/src/hb-repacker.hh harfbuzz-4.1.0.2/src/hb-repacker.hh
++--- harfbuzz-4.1.0.orig/src/hb-repacker.hh	2022-12-24 21:45:13.514638000 -0500
+++++ harfbuzz-4.1.0.2/src/hb-repacker.hh	2022-12-25 14:21:21.909220000 -0500
++@@ -165,7 +165,8 @@
++         v->obj = *objects[i];
++       if (!removed_nil) continue;
++       // Fix indices to account for removed nil object.
++-      for (auto& l : v->obj.all_links_writer ()) {
+++      for (auto& l : hb_concat (v->obj.real_links.writer (),
+++                                v->obj.virtual_links.writer ())) {
++         l.objidx--;
++       }
++     }
++@@ -281,7 +282,7 @@
++       sorted_graph[new_id] = next;
++       id_map[next_id] = new_id--;
++ 
++-      for (const auto& link : next.obj.all_links ()) {
+++      for (const auto& link : hb_concat (next.obj.real_links, next.obj.virtual_links)) {
++         removed_edges[link.objidx]++;
++         if (!(vertices_[link.objidx].incoming_edges () - removed_edges[link.objidx]))
++           queue.push (link.objidx);
++@@ -335,7 +336,7 @@
++       sorted_graph[new_id] = next;
++       id_map[next_id] = new_id--;
++ 
++-      for (const auto& link : next.obj.all_links ()) {
+++      for (const auto& link : hb_concat (next.obj.real_links, next.obj.virtual_links)) {
++         removed_edges[link.objidx]++;
++         if (!(vertices_[link.objidx].incoming_edges () - removed_edges[link.objidx]))
++           // Add the order that the links were encountered to the priority.
++@@ -494,7 +495,8 @@
++ 
++   void find_subgraph (unsigned node_idx, hb_hashmap_t<unsigned, unsigned>& subgraph)
++   {
++-    for (const auto& link : vertices_[node_idx].obj.all_links ())
+++    for (const auto& link : hb_concat (vertices_[node_idx].obj.real_links,
+++                                       vertices_[node_idx].obj.virtual_links))
++     {
++       if (subgraph.has (link.objidx))
++       {
++@@ -510,7 +512,8 @@
++   {
++     if (subgraph.has (node_idx)) return;
++     subgraph.add (node_idx);
++-    for (const auto& link : vertices_[node_idx].obj.all_links ())
+++    for (const auto& link : hb_concat (vertices_[node_idx].obj.real_links,
+++                                       vertices_[node_idx].obj.virtual_links))
++       find_subgraph (link.objidx, subgraph);
++   }
++ 
++@@ -525,7 +528,8 @@
++       return;
++ 
++     index_map.set (node_idx, duplicate (node_idx));
++-    for (const auto& l : object (node_idx).all_links ()) {
+++    for (const auto& l : hb_concat (object (node_idx).real_links,
+++                                    object (node_idx).virtual_links)) {
++       duplicate_subgraph (l.objidx, index_map);
++     }
++   }
++@@ -573,7 +577,8 @@
++     vertices_[vertices_.length - 1] = root;
++ 
++     // Since the root moved, update the parents arrays of all children on the root.
++-    for (const auto& l : root.obj.all_links ())
+++    for (const auto& l : hb_concat (root.obj.real_links,
+++                                    root.obj.virtual_links))
++       vertices_[l.objidx].remap_parent (root_idx () - 1, root_idx ());
++ 
++     return clone_idx;
++@@ -589,7 +594,8 @@
++     update_parents ();
++ 
++     unsigned links_to_child = 0;
++-    for (const auto& l : vertices_[parent_idx].obj.all_links ())
+++    for (const auto& l : hb_concat (vertices_[parent_idx].obj.real_links,
+++                                    vertices_[parent_idx].obj.virtual_links))
++     {
++       if (l.objidx == child_idx) links_to_child++;
++     }
++@@ -612,7 +618,8 @@
++     if (parent_idx == clone_idx) parent_idx++;
++ 
++     auto& parent = vertices_[parent_idx];
++-    for (auto& l : parent.obj.all_links_writer ())
+++    for (auto& l : hb_concat (parent.obj.real_links.writer (),
+++                              parent.obj.virtual_links.writer ()))
++     {
++       if (l.objidx != child_idx)
++         continue;
++@@ -635,7 +642,8 @@
++     // to update distances or edge counts.
++     auto& parent = vertices_[parent_idx].obj;
++     bool made_change = false;
++-    for (auto& l : parent.all_links_writer ())
+++    for (auto& l : hb_concat (parent.real_links.writer (),
+++                              parent.virtual_links.writer ()))
++       made_change |= vertices_[l.objidx].raise_priority ();
++     return made_change;
++   }
++@@ -813,7 +821,8 @@
++ 
++     for (unsigned p = 0; p < vertices_.length; p++)
++     {
++-      for (auto& l : vertices_[p].obj.all_links ())
+++      for (auto& l : hb_concat (vertices_[p].obj.real_links,
+++                                vertices_[p].obj.virtual_links))
++       {
++         vertices_[l.objidx].parents.push (p);
++       }
++@@ -881,7 +890,8 @@
++       int64_t next_distance = vertices_[next_idx].distance;
++       visited[next_idx] = true;
++ 
++-      for (const auto& link : next.obj.all_links ())
+++      for (const auto& link : hb_concat (next.obj.real_links,
+++                                         next.obj.virtual_links))
++       {
++         if (visited[link.objidx]) continue;
++ 
++@@ -980,7 +990,8 @@
++     if (!id_map) return;
++     for (unsigned i : subgraph)
++     {
++-      for (auto& link : vertices_[i].obj.all_links_writer ())
+++      for (auto& link : hb_concat (vertices_[i].obj.real_links.writer (),
+++                                   vertices_[i].obj.virtual_links.writer ()))
++       {
++         if (!id_map.has (link.objidx)) continue;
++         if (only_wide && !(link.width == 4 && !link.is_signed)) continue;
++@@ -999,7 +1010,8 @@
++     for (unsigned i = 0; i < sorted_graph->length; i++)
++     {
++       (*sorted_graph)[i].remap_parents (id_map);
++-      for (auto& link : (*sorted_graph)[i].obj.all_links_writer ())
+++      for (auto& link : hb_concat ((*sorted_graph)[i].obj.real_links.writer (),
+++                                   (*sorted_graph)[i].obj.virtual_links.writer ()))
++       {
++         link.objidx = id_map[link.objidx];
++       }
++@@ -1080,7 +1092,8 @@
++     const auto& v = vertices_[start_idx];
++ 
++     // Graph is treated as undirected so search children and parents of start_idx
++-    for (const auto& l : v.obj.all_links ())
+++    for (const auto& l : hb_concat (v.obj.real_links,
+++                                    v.obj.virtual_links))
++       find_connected_nodes (l.objidx, targets, visited, connected);
++ 
++     for (unsigned p : v.parents)
++diff -urN harfbuzz-4.1.0.orig/src/hb-serialize.hh harfbuzz-4.1.0.2/src/hb-serialize.hh
++--- harfbuzz-4.1.0.orig/src/hb-serialize.hh	2022-12-24 21:45:13.524638000 -0500
+++++ harfbuzz-4.1.0.2/src/hb-serialize.hh	2022-12-25 14:15:06.297886000 -0500
++@@ -74,7 +74,7 @@
++     }
++ 
++     object_t () = default;
++-    
+++
++ #ifdef HB_EXPERIMENTAL_API
++     object_t (const hb_object_t &o)
++     {
++@@ -137,11 +137,6 @@
++     hb_vector_t<link_t> real_links;
++     hb_vector_t<link_t> virtual_links;
++     object_t *next;
++-
++-    auto all_links () const HB_AUTO_RETURN
++-        (( hb_concat (this->real_links, this->virtual_links) ));
++-    auto all_links_writer () HB_AUTO_RETURN
++-        (( hb_concat (this->real_links.writer (), this->virtual_links.writer ()) ));
++   };
++ 
++   struct snapshot_t

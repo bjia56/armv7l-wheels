@@ -1,0 +1,15 @@
+FROM base
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
+
+RUN git clone https://github.com/PyAV-Org/pyav-ffmpeg.git && \
+    cd pyav-ffmpeg && \
+    git checkout 4.4.1-7
+ENV CIBUILDWHEEL=1
+
+COPY *.patch .
+WORKDIR pyav-ffmpeg
+RUN git apply ../*.patch
+RUN python3.8 scripts/build-ffmpeg.py /tmp/vendor 1
+WORKDIR ..
