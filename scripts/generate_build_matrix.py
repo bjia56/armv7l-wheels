@@ -66,7 +66,7 @@ def get_package_versions(package: str, buildspec: BuildSpec) -> List[str]:
 
 def already_exists(package: str, version: str, python_version: str) -> bool:
     tag = f"{package}-{version}-cpython{python_version}"
-    api = f"https://api.github.com/repos/bjia56/armv7l-wheels/releases/tags/{tag}"
+    api = f"https://github.com/bjia56/armv7l-wheels/releases/tag/{tag}"
     req = requests.get(api)
     return req.status_code == 200
 
