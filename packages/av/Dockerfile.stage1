@@ -3,6 +3,15 @@ ARG PYTHON_VERSION
 ARG VERSION
 ARG OUTPUT_DIR
 
+ENV CFLAGS='-I/usr/local/ssl/include' 
+ENV LDFLAGS='-L/usr/local/ssl/lib' 
+ENV LD_LIBRARY_PATH=/usr/local/ssl/lib:$LD_LIBRARY_PATH 
+ENVPKG_CONFIG_PATH=/usr/local/ssl/lib/pkgconfig 
+
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc 
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++ 
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
+
 RUN git clone https://github.com/PyAV-Org/pyav-ffmpeg.git && \
     cd pyav-ffmpeg && \
     git checkout 4.4.1-7
