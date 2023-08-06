@@ -10,7 +10,9 @@ build_wheel() (
     VER=$2
     mkdir build$PY_VER
     cd build$PY_VER
-    pip$PY_VER wheel --no-deps av==$VER
+    # https://github.com/PyAV-Org/PyAV/issues/1140#issuecomment-1642460904
+    echo "cython<3.0" >> c.txt
+    PIP_CONSTRAINT=c.txt pip$PY_VER wheel --no-deps av==$VER
 )
 
 test_wheel() (
