@@ -3,7 +3,7 @@ concurrency: periodic-build-all
 
 on:
   schedule:
-    - cron: "0 4 * * *"
+    - cron: "15 4 * * *"
   workflow_dispatch:
 
 jobs:
