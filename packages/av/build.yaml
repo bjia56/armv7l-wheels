@@ -4,7 +4,6 @@ source:
 - ./Dockerfile.stage2
 - ./Dockerfile.stage3
 - ./Dockerfile.stage4
-disable: true
 
 python:
   versions:
