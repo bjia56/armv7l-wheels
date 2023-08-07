@@ -1,4 +1,5 @@
 name: Periodic build all
+concurrency: periodic-build-all
 
 on:
   schedule:
