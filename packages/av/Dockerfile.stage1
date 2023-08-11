@@ -10,7 +10,7 @@ ENV FFMPEG_BUILD_VER=4.4.1-7
 FROM ver-${VERSION}
 RUN git clone https://github.com/PyAV-Org/pyav-ffmpeg.git && \
     cd pyav-ffmpeg && \
-    git checkout 4.4.1-7
+    git checkout ${FFMPEG_BUILD_VER}
 ENV CIBUILDWHEEL=1
 
 COPY *.patch .
