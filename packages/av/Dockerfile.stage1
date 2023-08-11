@@ -1,6 +1,4 @@
-ARG PYTHON_VERSION
 ARG VERSION
-ARG OUTPUT_DIR
 
 
 FROM base AS ver-9.2.0
@@ -8,6 +6,10 @@ ENV FFMPEG_BUILD_VER=4.4.1-7
 
 
 FROM ver-${VERSION}
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
+
 RUN git clone https://github.com/PyAV-Org/pyav-ffmpeg.git && \
     cd pyav-ffmpeg && \
     git checkout ${FFMPEG_BUILD_VER}
