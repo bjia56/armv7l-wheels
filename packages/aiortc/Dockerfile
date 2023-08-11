@@ -9,6 +9,9 @@ RUN git clone https://github.com/aiortc/aiortc-codecs.git && \
 ENV CIBUILDWHEEL=1
 
 WORKDIR aiortc-codecs
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc 
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++ 
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
 RUN python3.8 scripts/build-codecs.py /tmp/vendor
 WORKDIR ..
 
