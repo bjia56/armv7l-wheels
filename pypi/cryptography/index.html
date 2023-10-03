@@ -33,6 +33,24 @@
   <title>
    PyPI - Python Wheels for armv7l
   </title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script>
+    function annotateDownloadCount(releaseTag, anchorElement) {
+      fetch("https://api.github.com/repos/bjia56/armv7l-wheels/releases/tags/" + releaseTag)
+      .then(async resp => {
+        let release = await resp.json();
+        let downloadCount = release.assets[0].download_count;
+        anchorElement.innerText = anchorElement.innerText + " (" + downloadCount + " downloads)";
+      })
+      .catch(e => console.log(e));
+    }
+
+    function annotateAll() {
+      Array.from(document.links).forEach(anchor => annotateDownloadCount(anchor.href.split("/")[7], anchor));
+    }
+
+    $(document).ready(annotateAll);
+  </script>
  </head>
  <body>
   <div class="container">
