@@ -1,0 +1,8 @@
+strategy: pypi
+
+python:
+  versions:
+  - "3.9"
+
+package:
+  versions: latest
