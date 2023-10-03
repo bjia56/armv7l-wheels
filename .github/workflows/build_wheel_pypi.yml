@@ -63,6 +63,7 @@ jobs:
 
             # these env vars set the gcc toolchain to devtoolset-10
             export CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+            export FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
             export CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
             export LD=/opt/rh/devtoolset-10/root/usr/bin/g++
 
