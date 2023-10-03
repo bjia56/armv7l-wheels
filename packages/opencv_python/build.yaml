@@ -1,4 +1,5 @@
 strategy: pypi
+disable: true
 
 python:
   versions:
