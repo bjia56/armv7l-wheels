@@ -9,7 +9,7 @@ RUN wget https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.23/OpenB
     tar xf OpenBLAS-0.3.23.tar.gz && \ 
     cd OpenBLAS-0.3.23 && \ 
     mkdir -p /tmp/vendor && \ 
-    make PREFIX=/tmp/vendor 
+    make PREFIX=/tmp/vendor TARGET=ARMV7
 
 ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include' 
 ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib' 
