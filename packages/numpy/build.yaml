@@ -1,4 +1,5 @@
-strategy: pypi
+strategy: dockerfile
+source: ./Dockerfile
 disable: true
 
 python:
