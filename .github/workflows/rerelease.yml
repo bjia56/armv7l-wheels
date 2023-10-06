@@ -1,0 +1,118 @@
+name: Rebuild and republish wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+      strategy:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      python_version:
+        required: true
+        type: string
+      strategy:
+        required: true
+        type: string
+
+jobs:
+  validate-args:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print input arguments
+        run: echo "${{ toJSON(github.event.inputs) }}"
+
+      - uses: mukunku/tag-exists-action@v1.2.0
+        id: check-tag
+        with:
+          tag: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
+
+      - uses: nick-fields/assert-action@v1
+        with:
+          expected: "true"
+          actual: "${{ steps.check-tag.outputs.exists }}"
+          comparison: exact
+
+  build_dockerfile:
+    needs: validate-args
+    if: ${{ inputs.strategy == 'dockerfile' }}
+    uses: ./.github/workflows/build_wheel_dockerfile.yml
+    with:
+      package: ${{ inputs.package }}
+      version: ${{ inputs.version }}
+      python_version: ${{ inputs.python_version }}
+
+  build_pypi:
+    needs: validate-args
+    if: ${{ inputs.strategy == 'pypi' }}
+    uses: ./.github/workflows/build_wheel_pypi.yml
+    with:
+      package: ${{ inputs.package }}
+      version: ${{ inputs.version }}
+      python_version: ${{ inputs.python_version }}
+
+  release:
+    needs: [build_dockerfile, build_pypi]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.package }}-${{ inputs.version}}-cpython${{ inputs.python_version }}
+          path: /tmp/wheelhouse/
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: /tmp/wheelhouse/*.whl
+          tag_name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
+          body: ${{ inputs.package }} ${{ inputs.version }}
+
+  update-pypi:
+    needs: release
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Pull latest
+        run: |
+          git pull
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Update PyPI
+        run: python ./scripts/generate_pypi_links.py ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }} ${{ inputs.package }}
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v4
