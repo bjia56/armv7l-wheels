@@ -14,11 +14,6 @@ ARG OPENSSL_VERSION=1_1_1u
 ARG QT_VERSION=5.15.0
 ARG YASM_VERSION=1.3.0
 
-ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
-ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
-ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
-
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
 
 RUN yum install zlib-devel curl-devel xcb-util-renderutil-devel xcb-util-devel xcb-util-image-devel xcb-util-keysyms-devel xcb-util-wm-devel mesa-libGL-devel libxkbcommon-devel libxkbcommon-x11-devel libXi-devel lapack-devel epel-release -y && \
@@ -36,6 +31,11 @@ RUN mkdir ~/openblas_sources && \
     cd OpenBLAS-0.3.23 && \
     make PREFIX=/usr/local TARGET=ARMV7 -j4 && \
     make PREFIX=/usr/local TARGET=ARMV7 install
+
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++ 
 
 RUN mkdir ~/libpng_sources && \
     cd ~/libpng_sources && \
