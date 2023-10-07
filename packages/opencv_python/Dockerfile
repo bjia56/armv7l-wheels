@@ -32,11 +32,6 @@ RUN mkdir ~/openblas_sources && \
     make PREFIX=/usr/local TARGET=ARMV7 -j4 && \
     make PREFIX=/usr/local TARGET=ARMV7 install
 
-ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
-ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
-ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++ 
-
 RUN mkdir ~/libpng_sources && \
     cd ~/libpng_sources && \
     curl -O -L https://download.sourceforge.net/libpng/libpng-${LIBPNG_VERSION}.tar.gz && \
@@ -142,6 +137,11 @@ ENV LDFLAGS -L/ffmpeg_build/lib
 ENV PATH "$HOME/bin:$PATH"
 
 COPY . /repo
+
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++  
 
 RUN mkdir /opencv_python
 WORKDIR /opencv_python
