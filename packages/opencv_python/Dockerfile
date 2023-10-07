@@ -7,7 +7,7 @@ ARG OUTPUT_DIR
 
 ARG CCACHE_VERSION=3.7.9
 ARG FFMPEG_VERSION=5.1.3
-ARG FREETYPE_VERSION=2.13.1
+ARG FREETYPE_VERSION=2-13-1
 ARG LIBPNG_VERSION=1.6.40
 ARG NASM_VERSION=2.15.04
 ARG OPENSSL_VERSION=1_1_1u
@@ -45,9 +45,8 @@ RUN mkdir ~/libpng_sources && \
 
 RUN mkdir ~/freetype_sources && \
     cd ~/freetype_sources && \
-    curl -O -L https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
-    tar -xf freetype-${FREETYPE_VERSION}.tar.gz && \
-    cd freetype-${FREETYPE_VERSION} && \
+    git clone --depth 1 --branch VER-${FREETYPE_VERSION} https://github.com/freetype/freetype.git & & \
+    cd freetype && \
     ./configure --prefix="/ffmpeg_build" --enable-freetype-config && \
     make && \
     make install && \
