@@ -45,7 +45,7 @@ RUN mkdir ~/libpng_sources && \
 
 RUN mkdir ~/freetype_sources && \
     cd ~/freetype_sources && \
-    git clone --depth 1 --branch VER-${FREETYPE_VERSION} https://github.com/freetype/freetype.git && \
+    git clone --depth 1 --branch VER-${FREETYPE_VERSION} --recursive https://github.com/freetype/freetype.git && \
     cd freetype && \
     ./configure --prefix="/ffmpeg_build" --enable-freetype-config && \
     make && \
