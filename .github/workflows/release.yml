@@ -30,6 +30,11 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   validate-args:
     runs-on: ubuntu-latest
