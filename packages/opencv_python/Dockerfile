@@ -7,7 +7,7 @@ ARG OUTPUT_DIR
 
 ARG CCACHE_VERSION=3.7.9
 ARG FFMPEG_VERSION=5.1.3
-ARG FREETYPE_VERSION=2-13-1
+ARG FREETYPE_VERSION=2.13.1
 ARG LIBPNG_VERSION=1.6.40
 ARG NASM_VERSION=2.15.04
 ARG OPENSSL_VERSION=1_1_1u
@@ -45,8 +45,9 @@ RUN mkdir ~/libpng_sources && \
 
 RUN mkdir ~/freetype_sources && \
     cd ~/freetype_sources && \
-    git clone --depth 1 --branch VER-${FREETYPE_VERSION} --recursive https://github.com/freetype/freetype.git && \
-    cd freetype && \
+    curl -O -L https://github.com/bjia56/armv7l-wheels/releases/download/build-dependency-archives/freetype-${FREETYPE_VERSION}.tar.gz && \
+    tar -xf freetype-${FREETYPE_VERSION}.tar.gz && \
+    cd freetype-${FREETYPE_VERSION} && \
     ./configure --prefix="/ffmpeg_build" --enable-freetype-config && \
     make && \
     make install && \
@@ -140,7 +141,7 @@ COPY . /repo
 ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++  
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
 
 RUN mkdir /opencv_python
 WORKDIR /opencv_python
