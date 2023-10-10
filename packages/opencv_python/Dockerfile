@@ -54,6 +54,11 @@ RUN mkdir ~/freetype_sources && \
     cd .. && \
     rm -rf ~/freetype_sources
 
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++ 
+
 RUN curl -O -L https://download.qt.io/official_releases/qt/5.15/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz && \
     tar -xf qt-everywhere-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
@@ -137,11 +142,6 @@ ENV LDFLAGS -L/ffmpeg_build/lib
 ENV PATH "$HOME/bin:$PATH"
 
 COPY . /repo
-
-ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
-ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
-ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
 
 RUN mkdir /opencv_python
 WORKDIR /opencv_python
