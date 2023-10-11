@@ -50,6 +50,10 @@ jobs:
       fail-fast: false
       max-parallel: 1
     uses: ./.github/workflows/release.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     with:
       package: ${{ matrix.build_params['package'] }}
       version: ${{ matrix.build_params['version'] }}
