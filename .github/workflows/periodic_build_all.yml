@@ -49,12 +49,9 @@ jobs:
         build_params: ${{ fromJSON(needs.generate_matrix.outputs.build_matrix) }}
       fail-fast: false
       max-parallel: 1
-    permissions:
-      contents: write
     uses: ./.github/workflows/release.yml
     with:
       package: ${{ matrix.build_params['package'] }}
       version: ${{ matrix.build_params['version'] }}
       python_version: ${{ matrix.build_params['python_version'] }}
       strategy: ${{ matrix.build_params['strategy'] }}
-    secrets: inherit
