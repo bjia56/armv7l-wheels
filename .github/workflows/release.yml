@@ -118,7 +118,12 @@ jobs:
         run: python ./scripts/generate_pypi_links.py ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }} ${{ inputs.package }}
 
       - name: Commit and push
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          commit_message: Update PyPI for ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
 
   publish-pypi:
     needs: update-pypi
