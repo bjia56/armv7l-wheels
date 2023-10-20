@@ -29,35 +29,42 @@ def package_exists(soup, package_name):
 def update(pkg_name: str, link: str) -> None:
     norm_pkg_name = normalize(pkg_name)
 
+    url = urlparse(link)
+    filename = url.path.split('/')[-1]
+
     # Change the package page
     index_file = os.path.join(PYPI_DIR, norm_pkg_name, INDEX_FILE)
     with open(index_file) as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
     anchors = soup.find_all('a')
+    skip_add = False
     for anchor in anchors:
         if anchor['href'] == link:
             return
+        if anchor['href'] == "_link":
+            anchor['href'] = link
+            anchor.contents[0].replace_with(filename)
+            skip_add = True
 
-    # Create a new anchor element for our new version
-    last_anchor = anchors[-1]  # Copy the last anchor element
-    new_anchor = copy.copy(last_anchor)
-    new_anchor['href'] = link
-    url = urlparse(link)
-    filename = url.path.split('/')[-1]
-    new_anchor.contents[0].replace_with(filename)
+    if not skip_add:
+        # Create a new anchor element for our new version
+        last_anchor = anchors[-1]  # Copy the last anchor element
+        new_anchor = copy.copy(last_anchor)
+        new_anchor['href'] = link
+        new_anchor.contents[0].replace_with(filename)
 
-    # Add it to our index
-    br = soup.new_tag("br")
-    last_anchor.insert_after(br)
-    br.insert_after(new_anchor)
+        # Add it to our index
+        br = soup.new_tag("br")
+        last_anchor.insert_after(br)
+        br.insert_after(new_anchor)
 
     # Save it
     with open(index_file, 'wb') as index:
         index.write(soup.prettify("utf-8"))
 
 
-def register_or_update(pkg_name: str, link: str) -> None:
+def register_or_update(pkg_name: str, link: str = None) -> None:
     # Read our index first
     root_index = os.path.join(PYPI_DIR, INDEX_FILE)
     with open(root_index) as html_file:
@@ -65,7 +72,8 @@ def register_or_update(pkg_name: str, link: str) -> None:
     norm_pkg_name = normalize(pkg_name)
 
     if package_exists(soup, norm_pkg_name):
-        update(pkg_name, link)
+        if link:
+            update(pkg_name, link)
         return
 
     # Create a new anchor element for our new package
@@ -83,12 +91,13 @@ def register_or_update(pkg_name: str, link: str) -> None:
     with open(os.path.join(PYPI_DIR, TEMPLATE_FILE)) as temp_file:
         template = temp_file.read()
 
-    url = urlparse(link)
-    filename = url.path.split('/')[-1]
-
     template = template.replace("_package_name", pkg_name)
-    template = template.replace("_link", link)
-    template = template.replace("_filename", filename)
+    if link:
+        url = urlparse(link)
+        filename = url.path.split('/')[-1]
+
+        template = template.replace("_link", link)
+        template = template.replace("_filename", filename)
 
     os.mkdir(os.path.join(PYPI_DIR, norm_pkg_name))
     package_index = os.path.join(PYPI_DIR, norm_pkg_name, INDEX_FILE)
@@ -105,9 +114,13 @@ def main() -> None:
     package = sys.argv[2]
 
     release = requests.get(api).json()
-    for asset in release["assets"]:
-        url = asset["browser_download_url"]
-        register_or_update(package, url)
+    if "assets" in release:
+        for asset in release["assets"]:
+            url = asset["browser_download_url"]
+            register_or_update(package, url)
+    else:
+        print(f"Warning: No release found, but will ensure package directory exists")
+        register_or_update(package)
 
 
 if __name__ == "__main__":
