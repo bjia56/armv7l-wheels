@@ -58,11 +58,14 @@ RUN curl -O -L https://download.qt.io/official_releases/qt/5.15/${QT_VERSION}/si
     tar -xf qt-everywhere-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     export MAKEFLAGS=-j$(nproc) && \
-    PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH ./configure -prefix /opt/Qt${QT_VERSION} -release -opensource -confirm-license -qtnamespace QtOpenCVPython -xcb -xcb-xlib -bundled-xcb-xinput -no-openssl -no-dbus -skip qt3d -skip qtactiveqt -skip qtcanvas3d -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtgamepad -skip qtgraphicaleffects -skip qtimageformats -skip qtlocation -skip qtmultimedia -skip qtpurchasing -skip qtqa -skip qtremoteobjects -skip qtrepotools -skip qtscript -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qttranslations -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip xmlpatterns -skip declarative -make libs && \
+    export PREV_PATH=$PATH && \
+    export PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH && \
+    ./configure -prefix /opt/Qt${QT_VERSION} -release -opensource -confirm-license -qtnamespace QtOpenCVPython -xcb -xcb-xlib -bundled-xcb-xinput -no-openssl -no-dbus -skip qt3d -skip qtactiveqt -skip qtcanvas3d -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtgamepad -skip qtgraphicaleffects -skip qtimageformats -skip qtlocation -skip qtmultimedia -skip qtpurchasing -skip qtqa -skip qtremoteobjects -skip qtrepotools -skip qtscript -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qttranslations -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip xmlpatterns -skip declarative -make libs && \
     make && \
     make install && \
     cd .. && \
-    rm -rf qt-everywhere*
+    rm -rf qt-everywhere* && \
+    export PATH=$PREV_PATH
 
 ENV QTDIR /opt/Qt${QT_VERSION}
 ENV PATH "$QTDIR/bin:$PATH"
