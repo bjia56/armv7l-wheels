@@ -1,5 +1,7 @@
 strategy: dockerfile
-source: ./Dockerfile
+source:
+- ./Dockerfile.stage1
+- ./Dockerfile.stage2
 disable: true
 
 python:

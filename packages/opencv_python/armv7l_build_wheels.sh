@@ -10,7 +10,7 @@ build_wheel() (
     VER=$2
     mkdir build$PY_VER
     cd build$PY_VER
-    pip$PY_VER wheel --no-deps opencv_python==$VER
+    pip$PY_VER wheel --no-deps opencv_python==$VER --no-binary opencv_python --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
 )
 
 test_wheel() (
