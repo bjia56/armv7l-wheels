@@ -51,14 +51,12 @@ RUN mkdir ~/libvpx_sources && \
     cd ~/libvpx_sources && \
     git clone --depth 1 https://github.com/webmproject/libvpx.git && \
     cd libvpx && \
-    export PREV_PATH=$PATH && \
-    export PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH && \
+    CHOST=arm-linux-gnueabihf && \
     ./configure --prefix="/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm --enable-pic --enable-shared && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd .. && \
-    rm -rf ~/libvpx_sources && \
-    export PATH=$PREV_PATH
+    rm -rf ~/libvpx_sources
 
 RUN mkdir ~/ffmpeg_sources && \
     cd ~/ffmpeg_sources && \
