@@ -39,7 +39,7 @@ COPY ./libvpx.patch /tmp/libvpx.patch
 
 RUN mkdir ~/libvpx_sources && \
     cd ~/libvpx_sources && \
-    git clone --depth 1 https://github.com/webmproject/libvpx.git && \
+    git clone --depth 1 --branch v1.13.1 --single-branch https://github.com/webmproject/libvpx.git && \
     cd libvpx && \
     git apply /tmp/libvpx.patch && \
     ./configure --prefix="/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm --enable-pic --enable-shared && \
