@@ -121,7 +121,7 @@ jobs:
           platforms: linux/armhf
           tags: armv7l:latest
           cache-from: type=gha,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}
-          cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}
+          cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}
           outputs: type=docker,dest=/tmp/stage.tar
 
       - name: Upload artifact
