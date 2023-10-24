@@ -35,11 +35,13 @@ RUN mkdir ~/yasm_sources && \
     cd .. && \
     rm -rf ~/yasm_sources
 
+COPY ./libvpx.patch /tmp/libvpx.patch
+
 RUN mkdir ~/libvpx_sources && \
     cd ~/libvpx_sources && \
     git clone --depth 1 https://github.com/webmproject/libvpx.git && \
     cd libvpx && \
-    CHOST=arm-linux-gnueabihf && \
+    git apply /tmp/libvpx.patch && \
     ./configure --prefix="/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm --enable-pic --enable-shared && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install && \
@@ -71,17 +73,3 @@ RUN curl -O -L https://github.com/ccache/ccache/releases/download/v${CCACHE_VERS
 ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig:/ffmpeg_build/lib/pkgconfig
 ENV LDFLAGS -L/ffmpeg_build/lib
 ENV PATH "$HOME/bin:$PATH"
-
-ARG PYTHON_VERSION
-ARG VERSION
-ARG OUTPUT_DIR
-
-COPY . /repo
-
-RUN mkdir /opencv_python
-WORKDIR /opencv_python
-RUN select_python ${PYTHON_VERSION}
-RUN /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
-
-RUN mkdir -p ${OUTPUT_DIR} && \
-    cp build${PYTHON_VERSION}/wheelhouse/opencv_python*manylinux*armv7l.whl ${OUTPUT_DIR}
