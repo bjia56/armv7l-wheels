@@ -98,7 +98,6 @@ jobs:
       - name: Load image
         if: ${{ matrix.build_params['key'] != 0 }}
         run: |
-          gzip -d /tmp/stage.tar.gz
           docker load --input /tmp/stage.tar
           docker image ls -a
 
@@ -125,17 +124,12 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}
           outputs: type=docker,dest=/tmp/stage.tar
 
-      - name: Compress image
-        if: ${{ matrix.build_params['key'] != fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
-        run: |
-          gzip /tmp/stage.tar
-
-      - name: Upload image
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         if: ${{ matrix.build_params['key'] != fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
-          path: /tmp/stage.tar.gz
+          path: /tmp/stage.tar
 
       - name: Load image
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
