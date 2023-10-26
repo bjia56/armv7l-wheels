@@ -16,7 +16,7 @@ build_wheel() (
 test_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    pip$PY_VER install wheelhouse/opencv_python*manylinux*armv7l.whl
+    pip$PY_VER install wheelhouse/opencv_python*manylinux*armv7l.whl --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
     python$PY_VER -c "import cv2; print(cv2)"
 )
 
