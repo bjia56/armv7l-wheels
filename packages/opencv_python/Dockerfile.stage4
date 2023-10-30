@@ -12,7 +12,7 @@ ENV LDFLAGS -L/ffmpeg_build/lib -L/opt/Qt5.15.0/lib
 RUN mkdir /opencv_python
 WORKDIR /opencv_python
 RUN select_python ${PYTHON_VERSION}
-RUN export MAKEFLAGS="-j$(nproc)" && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+RUN export MAKEFLAGS="-j$(nproc)" && export CI_BUILD=1 && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
     cp build${PYTHON_VERSION}/wheelhouse/opencv_python*manylinux*armv7l.whl ${OUTPUT_DIR}
