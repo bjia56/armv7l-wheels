@@ -6,7 +6,8 @@ ARG OUTPUT_DIR
 
 COPY . /repo
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/Qt5.15.0/lib
+ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig:/ffmpeg_build/lib/pkgconfig:/opt/Qt5.15.0/lib/pkgconfig
+ENV LDFLAGS -L/ffmpeg_build/lib -L/opt/Qt5.15.0/lib
 
 RUN mkdir /opencv_python
 WORKDIR /opencv_python
