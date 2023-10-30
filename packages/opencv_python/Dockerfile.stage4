@@ -8,6 +8,7 @@ COPY . /repo
 
 ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig:/ffmpeg_build/lib/pkgconfig:/opt/Qt5.15.0/lib/pkgconfig
 ENV LDFLAGS -L/ffmpeg_build/lib -L/opt/Qt5.15.0/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/Qt5.15.0/lib
 
 ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
