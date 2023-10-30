@@ -3,6 +3,7 @@ source:
 - file: ./Dockerfile.stage1
   common: true
 - ./Dockerfile.stage2
+disable: true
 
 python:
   versions:
@@ -13,4 +14,4 @@ python:
 
 package:
   versions:
-  - 9.2.0
+  - latest
