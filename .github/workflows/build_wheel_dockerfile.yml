@@ -33,6 +33,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.10'
+
+      - name: Install required packages
+        run: |
+          pip install pyyaml
+
       - name: Get build strategy
         working-directory: packages/${{ inputs.package }}
         run: |
@@ -49,15 +58,15 @@ jobs:
         working-directory: packages/${{ inputs.package }}
         run: |
           set -x
-          echo "::set-output name=matrix::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0]')"
-          echo "::set-output name=matrix_last::$(cat build.yaml | yq -o=json -I=0 '[(.source | array_to_map),(select(.source | type == "!!str").source | (. | select(. != null) ) as $i ireduce({}; .[$i | 0] = $i))] | filter(. | length > 0) | map(to_entries) | .[0] | length - 1')"
+          echo "::set-output name=matrix::$(cat build.yaml | ../../scripts/extract_dockerfile_matrix.py)"
+          echo "::set-output name=matrix_last::$(cat build.yaml | ../../scripts/extract_dockerfile_matrix.py | jq 'length')"
 
     outputs:
       build_matrix: ${{ steps.gen_matrix.outputs.matrix }}
       build_matrix_last: ${{ steps.gen_matrix.outputs.matrix_last }}
 
   build:
-    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }} ${{ fromJSON(needs.calculate_matrix.outputs.build_matrix_last) == 0 && ' ' || matrix.build_params['key'] }}
+    name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }} ${{ fromJSON(needs.calculate_matrix.outputs.build_matrix_last) == 1 && ' ' || matrix.build_params['key'] }}
     runs-on: ubuntu-latest
     needs: calculate_matrix
     strategy:
@@ -84,35 +93,45 @@ jobs:
           driver-opts: network=host
 
       - name: Calculate previous build number
-        if: ${{ matrix.build_params['key'] != 0 }}
+        if: ${{ matrix.build_params['key'] != 1 }}
         run: |
           echo "PREVIOUS=$((${{ matrix.build_params['key'] }} - 1))" >> $GITHUB_ENV
 
       - name: Download artifact
         uses: actions/download-artifact@v3
-        if: ${{ matrix.build_params['key'] != 0 }}
+        if: ${{ matrix.build_params['key'] != 1 }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ env.PREVIOUS }}
           path: /tmp
 
       - name: Load image
-        if: ${{ matrix.build_params['key'] != 0 }}
+        if: ${{ matrix.build_params['key'] != 1 }}
         run: |
           docker load --input /tmp/stage.tar
           docker image ls -a
 
       - name: Push image to local registry
-        if: ${{ matrix.build_params['key'] != 0 }}
+        if: ${{ matrix.build_params['key'] != 1 }}
         run: |
           docker image tag armv7l:latest localhost:5000/base:latest
           docker image push localhost:5000/base:latest
+
+      - name: Calculate cache tag
+        if: ${{ !matrix.build_params['common'] }}
+        run: |
+          echo "CACHE_TAG=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}" >> $GITHUB_ENV
+
+      - name: Calculate cache tag (common)
+        if: ${{ matrix.build_params['common'] }}
+        run: |
+          echo "CACHE_TAG=${{ github.ref }}-${{ inputs.package }}-common-${{ matrix.build_params['key'] }}" >> $GITHUB_ENV
 
       - name: Build wheels via Docker
         uses: docker/build-push-action@v3
         with:
           context: packages/${{ inputs.package }}
-          file: packages/${{ inputs.package }}/${{ matrix.build_params['value'] }}
-          build-contexts: base=docker-image://${{ matrix.build_params['key'] == 0 && 'ghcr.io/bjia56/armv7l-wheel-builder:main' || 'localhost:5000/base:latest' }}
+          file: packages/${{ inputs.package }}/${{ matrix.build_params['file'] }}
+          build-contexts: base=docker-image://${{ matrix.build_params['key'] == 1 && 'ghcr.io/bjia56/armv7l-wheel-builder:main' || 'localhost:5000/base:latest' }}
           build-args: |
             PYTHON_VERSION=${{ inputs.python_version }}
             VERSION=${{ inputs.version }}
@@ -120,8 +139,8 @@ jobs:
           push: false
           platforms: linux/armhf
           tags: armv7l:latest
-          cache-from: type=gha,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}-${{ matrix.build_params['key'] }}
-          cache-to: type=gha,mode=max,scope=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-${{ inputs.python_version }}
+          cache-from: type=gha,scope=${{ env.CACHE_TAG }}
+          cache-to: type=gha,mode=max,scope=${{ env.CACHE_TAG }}
           outputs: type=docker,dest=/tmp/stage.tar
 
       - name: Upload artifact
