@@ -1,0 +1,13 @@
+diff --git a/build/make/configure.sh b/build/make/configure.sh
+index 9d3cd80cb..f64d38a7a 100644
+--- a/build/make/configure.sh
++++ b/build/make/configure.sh
+@@ -752,7 +752,7 @@ process_common_toolchain() {
+       aarch64*)
+         tgt_isa=arm64
+         ;;
+-      armv7*-hardfloat* | armv7*-gnueabihf | arm-*-gnueabihf)
++      armv7*-hardfloat* | armv7h* | armv7*-gnueabihf | arm-*-gnueabihf)
+         tgt_isa=armv7
+         float_abi=hard
+         ;;
