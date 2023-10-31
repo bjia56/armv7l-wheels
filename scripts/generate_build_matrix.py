@@ -96,7 +96,8 @@ def get_package_versions(package: str, buildspec: BuildSpec) -> List[str]:
 
 def already_exists(package: str, version: str, python_version: str) -> bool:
     tag = f"{package}-{version}-cpython{python_version}"
-    return subprocess.check_output(["git", "tag", "-l", tag]).strip() != ""
+    res = subprocess.check_output(["git", "tag", "-l", tag]).strip()
+    return bool(res)
 
 
 def main() -> None:
@@ -112,7 +113,6 @@ def main() -> None:
         package_versions = get_package_versions(package, buildspec)
 
         build_list = itertools.product(package_versions, python_versions)
-
         for build in build_list:
             version, python_version = build[0], build[1]
             if not already_exists(package, version, python_version):

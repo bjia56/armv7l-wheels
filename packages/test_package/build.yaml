@@ -14,4 +14,4 @@ python:
 
 package:
   versions:
-  - latest
+  - not.a.version
