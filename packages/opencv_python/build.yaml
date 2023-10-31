@@ -1,14 +1,20 @@
 strategy: dockerfile
 source:
-- ./Dockerfile.stage1
-- ./Dockerfile.stage2
-- ./Dockerfile.stage3
+- file: ./Dockerfile.stage1
+  common: true
+- file: ./Dockerfile.stage2
+  common: true
+- file: ./Dockerfile.stage3
+  common: true
 - ./Dockerfile.stage4
-disable: true
 
 python:
   versions:
+  - "3.7"
+  - "3.8"
   - "3.9"
+  - "3.10"
+  - "3.11"
 
 package:
   versions: latest
