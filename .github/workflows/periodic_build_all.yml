@@ -19,8 +19,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-tags: true
+
+      - name: Fetch tags
+        run: |
+          git fetch --tags
 
       - name: Set up Python
         uses: actions/setup-python@v1
