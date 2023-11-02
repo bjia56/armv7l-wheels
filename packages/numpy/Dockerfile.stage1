@@ -1,0 +1,10 @@
+FROM ghcr.io/bjia56/armv7l-wheel-builder:main
+
+WORKDIR /
+RUN wget -q https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.23/OpenBLAS-0.3.23.tar.gz && \
+    tar xf OpenBLAS-0.3.23.tar.gz && \
+    cd OpenBLAS-0.3.23 && \
+    mkdir -p /tmp/vendor && \
+    make PREFIX=/tmp/vendor TARGET=ARMV7 -j4 && \
+    make PREFIX=/tmp/vendor TARGET=ARMV7 install
+
