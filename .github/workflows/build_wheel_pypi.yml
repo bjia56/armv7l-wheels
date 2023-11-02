@@ -45,7 +45,7 @@ jobs:
           comparison: exact
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Run build
         uses: addnab/docker-run-action@v3
