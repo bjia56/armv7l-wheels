@@ -134,6 +134,7 @@ jobs:
           build-contexts: base=docker-image://${{ matrix.build_params['key'] == 1 && 'ghcr.io/bjia56/armv7l-wheel-builder:main' || 'localhost:5000/base:latest' }}
           build-args: |
             PYTHON_VERSION=${{ inputs.python_version }}
+            PACKAGE=${{ inputs.package }}
             VERSION=${{ inputs.version }}
             OUTPUT_DIR=/export
           push: false

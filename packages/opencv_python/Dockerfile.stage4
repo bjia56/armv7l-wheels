@@ -1,6 +1,7 @@
 FROM base
 
 ARG PYTHON_VERSION
+ARG PACKAGE
 ARG VERSION
 ARG OUTPUT_DIR
 
@@ -15,10 +16,10 @@ ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
 ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
 
-RUN mkdir /opencv_python
-WORKDIR /opencv_python
+RUN mkdir /${PACKAGE}
+WORKDIR /${PACKAGE}
 RUN select_python ${PYTHON_VERSION}
-RUN export MAKEFLAGS="-j$(nproc)" && export CI_BUILD=1 && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+RUN export MAKEFLAGS="-j$(nproc)" && export CI_BUILD=1 && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION} ${PACKAGE}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
-    cp build${PYTHON_VERSION}/wheelhouse/opencv_python*manylinux*armv7l.whl ${OUTPUT_DIR}
+    cp build${PYTHON_VERSION}/wheelhouse/${PACKAGE}*manylinux*armv7l.whl ${OUTPUT_DIR}
