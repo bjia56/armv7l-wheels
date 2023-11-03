@@ -1,15 +1,7 @@
-FROM ghcr.io/bjia56/armv7l-wheel-builder:main
+FROM base
 ARG PYTHON_VERSION
 ARG VERSION
 ARG OUTPUT_DIR
-
-WORKDIR /
-RUN wget -q https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.23/OpenBLAS-0.3.23.tar.gz && \
-    tar xf OpenBLAS-0.3.23.tar.gz && \
-    cd OpenBLAS-0.3.23 && \
-    mkdir -p /tmp/vendor && \
-    make PREFIX=/tmp/vendor TARGET=ARMV7 -j4 && \
-    make PREFIX=/tmp/vendor TARGET=ARMV7 install
 
 ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include'
 ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib'
@@ -26,7 +18,8 @@ COPY . /repo
 RUN mkdir /numpy
 WORKDIR /numpy
 RUN select_python ${PYTHON_VERSION}
-RUN /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+RUN pip3 install setuptools==49.2.0
+RUN export OPENBLAS=/tmp/vendor && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
     cp build${PYTHON_VERSION}/wheelhouse/numpy*manylinux*armv7l.whl ${OUTPUT_DIR}
