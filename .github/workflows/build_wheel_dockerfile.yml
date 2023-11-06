@@ -127,7 +127,7 @@ jobs:
           echo "CACHE_TAG=${{ github.ref }}-${{ inputs.package }}-common-${{ matrix.build_params['key'] }}" >> $GITHUB_ENV
 
       - name: Build wheels via Docker
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: packages/${{ inputs.package }}
           file: packages/${{ inputs.package }}/${{ matrix.build_params['file'] }}
