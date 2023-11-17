@@ -15,7 +15,7 @@ out = []
 
 if isinstance(buildspec.get("source"), str):
     out.append({
-        "key": 0,
+        "key": 1,
         "file": buildspec["source"],
         "common": False
     })
