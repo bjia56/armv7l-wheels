@@ -11,7 +11,7 @@ ENV PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH
 WORKDIR /
 RUN git clone https://github.com/python-pillow/Pillow.git && \
     cd Pillow && \
-    git checkout ${VERSION} && \
+    git checkout main && \
     git submodule update --init --recursive && \
     export BUILD_PREFIX="/usr/local" && \
     ./.github/workflows/wheels-dependencies.sh
