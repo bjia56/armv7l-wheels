@@ -1,7 +1,7 @@
 FROM ghcr.io/bjia56/armv7l-wheel-builder:main
-ARG PYTHON_VERSION=3.9
-ARG VERSION=10.1.0
-ARG OUTPUT_DIR=/output
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
 
 RUN yum install -y libX11-devel
 RUN yum remove -y zlib-devel
@@ -9,9 +9,9 @@ RUN yum remove -y zlib-devel
 ENV PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH
 
 WORKDIR /
-RUN git clone https://github.com/radarhere/Pillow.git && \
+RUN git clone https://github.com/python-pillow/Pillow.git && \
     cd Pillow && \
-    git checkout cibuildwheel && \
+    git checkout ${VERSION} && \
     git submodule update --init --recursive && \
     export BUILD_PREFIX="/usr/local" && \
     ./.github/workflows/wheels-dependencies.sh
