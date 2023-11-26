@@ -109,12 +109,14 @@ jobs:
         run: |
           docker load --input /tmp/stage.tar
           docker image ls -a
+          rm /tmp/stage.tar
 
       - name: Push image to local registry
         if: ${{ matrix.build_params['key'] != 1 }}
         run: |
           docker image tag armv7l:latest localhost:5000/base:latest
           docker image push localhost:5000/base:latest
+          docker system prune -a -f
 
       - name: Calculate cache tag
         if: ${{ !matrix.build_params['common'] }}
@@ -156,6 +158,7 @@ jobs:
         run: |
           docker load --input /tmp/stage.tar
           docker image ls -a
+          rm /tmp/stage.tar
 
       - name: Extract output
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
