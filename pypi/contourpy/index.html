@@ -33,9 +33,10 @@
   <title>
    PyPI - Python Wheels for armv7l
   </title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+  </script>
   <script>
-    function annotateDownloadCount(releaseTag, anchorElement) {
+   function annotateDownloadCount(releaseTag, anchorElement) {
       fetch("https://api.github.com/repos/bjia56/armv7l-wheels/releases/tags/" + releaseTag)
       .then(async resp => {
         let release = await resp.json();
@@ -52,17 +53,21 @@
     $(document).ready(annotateAll);
   </script>
  </head>
-  <body>
-   <div class="container">
-    <section class="header">
-     contourpy
-    </section>
-    <pre><code>pip install contourpy --extra-index-url https://bjia56.github.io/armv7l-wheels/</code></pre>
-    <br/>
-    <a href="https://github.com/bjia56/armv7l-wheels/releases/download/contourpy-1.2.0-cpython3.9/contourpy-1.2.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
-      contourpy-1.2.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
-    </a>
-    <hr/>
+ <body>
+  <div class="container">
+   <section class="header">
+    contourpy
+   </section>
+   <pre><code>pip install contourpy --extra-index-url https://bjia56.github.io/armv7l-wheels/</code></pre>
+   <br/>
+   <a href="https://github.com/bjia56/armv7l-wheels/releases/download/contourpy-1.2.0-cpython3.9/contourpy-1.2.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
+    contourpy-1.2.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
+   </a>
+   <br/>
+   <a href="https://github.com/bjia56/armv7l-wheels/releases/download/contourpy-1.2.0-cpython3.10/contourpy-1.2.0-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
+    contourpy-1.2.0-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
+   </a>
+   <hr/>
   </div>
  </body>
 </html>
