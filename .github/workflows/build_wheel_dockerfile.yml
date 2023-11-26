@@ -116,6 +116,7 @@ jobs:
         run: |
           docker image tag armv7l:latest localhost:5000/base:latest
           docker image push localhost:5000/base:latest
+          docker system prune -a -f
 
       - name: Calculate cache tag
         if: ${{ !matrix.build_params['common'] }}
