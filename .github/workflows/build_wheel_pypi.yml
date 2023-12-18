@@ -75,7 +75,7 @@ jobs:
             cp wheelhouse/${{ inputs.package }}-*manylinux*armv7l.whl /export
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
           path: /tmp/output/*.whl

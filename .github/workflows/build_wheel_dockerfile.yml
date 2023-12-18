@@ -147,7 +147,7 @@ jobs:
           outputs: type=docker,dest=/tmp/stage.tar
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.build_params['key'] != fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
@@ -166,7 +166,7 @@ jobs:
           docker run -v /tmp/output:/host armv7l:latest bash -c "cp /export/* /host/"
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
