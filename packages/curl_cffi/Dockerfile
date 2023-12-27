@@ -8,9 +8,9 @@ RUN yum install -y libcurl-devel
 COPY . /repo
 
 WORKDIR /
-RUN git clone https://github.com/bjia56/curl-impersonate.git && \
+RUN git clone https://github.com/lwthiker/curl-impersonate.git && \
     cd curl-impersonate && \
-    git checkout armv7l
+    git checkout 9303ce340f212ba92c00bdfd2f7c1380f1d069d7
 
 WORKDIR /curl-impersonate
 RUN mkdir -p build/install
