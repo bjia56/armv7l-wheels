@@ -65,7 +65,7 @@ jobs:
             export CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
             export FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
             export CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-            export LD=/opt/rh/devtoolset-10/root/usr/bin/g++
+            export LD=/opt/rh/devtoolset-10/root/usr/bin/ld
 
             python${{ inputs.python_version }} -m pip wheel --no-deps ${{ inputs.package }}==${{ inputs.version }} --no-binary ${{ inputs.package }} --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
             auditwheel repair ${{ inputs.package }}*armv7l.whl
