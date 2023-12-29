@@ -6,7 +6,7 @@ ARG OUTPUT_DIR
 ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
 
 WORKDIR /
 RUN wget https://github.com/aiortc/pylibsrtp/archive/refs/tags/${VERSION}.tar.gz && \
