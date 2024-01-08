@@ -10,20 +10,20 @@ build_wheel() (
     VER=$2
     mkdir build$PY_VER
     cd build$PY_VER
-    pip$PY_VER wheel --no-deps Pillow==$VER
+    pip$PY_VER wheel --no-deps pillow==$VER
 )
 
 test_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    pip$PY_VER install wheelhouse/Pillow*manylinux*armv7l.whl
+    pip$PY_VER install wheelhouse/pillow*manylinux*armv7l.whl
     python$PY_VER -c "import PIL; print(PIL)"
 )
 
 repair_wheel() (
     PY_VER=$1
     cd build$PY_VER
-    auditwheel repair Pillow*armv7l.whl
+    auditwheel repair pillow*armv7l.whl
 )
 
 build_wheel $PYTHON3_VERSION $PACKAGE_VERSION
