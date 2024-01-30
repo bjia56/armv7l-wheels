@@ -13,7 +13,7 @@ RUN wget https://github.com/aiortc/pylibsrtp/archive/refs/tags/${VERSION}.tar.gz
     tar xf ${VERSION}.tar.gz && \
     cd pylibsrtp-${VERSION} && \
     mkdir -p /tmp/vendor && \
-    python3.9 scripts/build-libsrtp.py /tmp/vendor
+    python3.10 scripts/build-libsrtp.py /tmp/vendor
 
 ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include'
 ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib'
