@@ -42,7 +42,7 @@ jobs:
       - name: Print input arguments
         run: echo "${{ toJSON(github.event.inputs) }}"
 
-      - uses: mukunku/tag-exists-action@v1.5.0
+      - uses: mukunku/tag-exists-action@v1.6.0
         id: check-tag
         with:
           tag: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
