@@ -129,3 +129,5 @@ jobs:
     needs: update-pypi
     if: ${{ always() }}
     uses: ./.github/workflows/pages.yml
+    with:
+      build_triplet: "${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}"

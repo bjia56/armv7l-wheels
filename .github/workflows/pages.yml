@@ -10,6 +10,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   workflow_call:
+    inputs:
+      build_triplet:
+        required: false
+        type: string
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -42,6 +46,7 @@ jobs:
         with:
           # Upload entire repository
           path: './pypi'
+          name: "${{ inputs.build_triplet || 'default' }}-github-pages"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
