@@ -1,11 +1,7 @@
-strategy: dockerfile
-source: ./Dockerfile
+strategy: pypi
 
 python:
   versions: ["3.9"]
 
 package:
-  versions:
-  - 0.5.7
-  - 0.5.9
-  - 0.5.10
+  versions: latest
