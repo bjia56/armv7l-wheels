@@ -6,4 +6,6 @@ python:
 
 package:
   versions:
-  - 0.6.1
+  - 0.5.7
+  - 0.5.9
+  - 0.5.10
