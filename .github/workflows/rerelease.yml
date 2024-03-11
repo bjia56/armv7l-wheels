@@ -85,7 +85,7 @@ jobs:
           path: /tmp/wheelhouse/
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: /tmp/wheelhouse/*.whl
           tag_name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
