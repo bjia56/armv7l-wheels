@@ -4,11 +4,22 @@ ARG VERSION
 FROM base AS ver-9.2.0
 ENV FFMPEG_BUILD_VER=4.4.1-7
 
+FROM base AS ver-11.0.0
+ENV FFMPEG_BUILD_VER=6.0.0-1
+
+FROM base AS ver-12.0.0
+ENV FFMPEG_BUILD_VER=6.1.1-1
+
 
 FROM ver-${VERSION}
 ARG PYTHON_VERSION
 ARG VERSION
 ARG OUTPUT_DIR
+
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
 
 RUN git clone https://github.com/PyAV-Org/pyav-ffmpeg.git && \
     cd pyav-ffmpeg && \
@@ -17,6 +28,6 @@ ENV CIBUILDWHEEL=1
 
 COPY *.patch .
 WORKDIR pyav-ffmpeg
-RUN git apply ../${VERSION}.patch
+RUN git apply ../${VERSION}.patch; exit 0
 RUN python3.8 scripts/build-ffmpeg.py /tmp/vendor 1
 WORKDIR ..
