@@ -1,0 +1,10 @@
+strategy: dockerfile
+source: ./Dockerfile
+disable: true
+
+python:
+  versions:
+  - "3.9"
+
+package:
+  versions: latest
