@@ -13,6 +13,7 @@ RUN select_python ${PYTHON_VERSION}
 RUN python3 -m pip install scons
 RUN git clone --recurse-submodules --single-branch --branch=master https://github.com/openvinotoolkit/openvino.git
 WORKDIR openvino
+RUN git checkout ${VERSION}
 RUN mkdir build
 WORKDIR build
 RUN cmake -DCMAKE_BUILD_TYPE=Release \
