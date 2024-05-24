@@ -3,6 +3,8 @@ ARG PYTHON_VERSION
 ARG VERSION
 ARG OUTPUT_DIR
 
+RUN yum install -y scons
+
 ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
