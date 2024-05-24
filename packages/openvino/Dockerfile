@@ -16,5 +16,8 @@ WORKDIR openvino
 RUN mkdir build
 WORKDIR build
 RUN cmake -DCMAKE_BUILD_TYPE=Release \
-      -DARM_COMPUTE_SCONS_JOBS=4 \
-    .. && make -j4 
+          -DENABLE_PYTHON=ON \
+          -DPython3_EXECUTABLE=/usr/local/bin/python3 \
+          -DARM_COMPUTE_SCONS_JOBS=4 \
+          .. && \
+    make -j4 
