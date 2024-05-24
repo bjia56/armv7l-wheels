@@ -7,6 +7,7 @@ ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
 ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
+ENV PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH
 
 WORKDIR /
 RUN select_python ${PYTHON_VERSION} 
