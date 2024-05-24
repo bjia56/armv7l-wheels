@@ -17,4 +17,4 @@ RUN mkdir build
 WORKDIR build
 RUN cmake -DCMAKE_BUILD_TYPE=Release \
       -DARM_COMPUTE_SCONS_JOBS=4 \
-    .. && cmake --build . --parallel 
+    .. && make -j4 
