@@ -99,10 +99,10 @@ index 94644ea..3e75409 100644
  +	@echo "    [IMPLIB] $@"
  +CLEAN-OBJS += libvpx.dll.a
 diff --git a/patches/x265.patch b/patches/x265.patch
-index 95203f3..dd50219 100644
+index 95203f3..3584dc1 100644
 --- a/patches/x265.patch
 +++ b/patches/x265.patch
-@@ -266,3 +266,16 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
+@@ -266,3 +266,28 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
   /* fallback for older GCC/MinGW */
   static inline uint32_t __rdtsc(void)
   {
@@ -118,12 +118,24 @@ index 95203f3..dd50219 100644
 +                 add_definitions(-DHAVE_NEON)
 +             else()
 +                 set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++diff -urN x265_3.5.orig/source/common/primitives.cpp x265_3.5/source/common/primitives.cpp
++--- x265_3.5.orig/source/common/primitives.cpp	2024-05-27 08:04:34.904043547 -0400
+++++ x265_3.5/source/common/primitives.cpp	2024-05-27 08:08:50.504015396 -0400
++@@ -295,7 +295,7 @@
++ void PFX(cpu_cpuid)(uint32_t, uint32_t *eax, uint32_t *, uint32_t *, uint32_t *) { *eax = 0; }
++ void PFX(cpu_xgetbv)(uint32_t, uint32_t *, uint32_t *) {}
++ 
++-#if X265_ARCH_ARM == 0
+++#if X265_ARCH_ARM != 0
++ void PFX(cpu_neon_test)(void) {}
++ int PFX(cpu_fast_neon_mrc_test)(void) { return 0; }
++ #endif // X265_ARCH_ARM
 +
 diff --git a/scripts/build-ffmpeg.py b/scripts/build-ffmpeg.py
-index 1788e6b..e59e3d7 100644
+index 1efcea5..38f7bfd 100644
 --- a/scripts/build-ffmpeg.py
 +++ b/scripts/build-ffmpeg.py
-@@ -55,7 +55,7 @@ if not os.path.exists(output_tarball):
+@@ -59,7 +59,7 @@ if not os.path.exists(output_tarball):
              run(["where", tool])
  
      with log_group("install python packages"):
@@ -132,7 +144,7 @@ index 1788e6b..e59e3d7 100644
  
      # build tools
  
-@@ -185,6 +185,7 @@ if not os.path.exists(output_tarball):
+@@ -195,6 +195,7 @@ if not os.path.exists(output_tarball):
                  "-DENABLE_EXAMPLES=0",
                  "-DENABLE_TESTS=0",
                  "-DENABLE_TOOLS=0",
@@ -141,7 +153,7 @@ index 1788e6b..e59e3d7 100644
              build_parallel=False,
          ),
 diff --git a/scripts/cibuildpkg.py b/scripts/cibuildpkg.py
-index e7b941c..ca420c6 100644
+index fbc7081..ef569c9 100644
 --- a/scripts/cibuildpkg.py
 +++ b/scripts/cibuildpkg.py
 @@ -85,7 +85,7 @@ def make_args(*, parallel: bool) -> List[str]:
