@@ -27,7 +27,7 @@ on:
 jobs:
   calculate_matrix:
     name: Calculate build matrix
-    runs-on: self-hosted #ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
 
   build:
     name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }} ${{ fromJSON(needs.calculate_matrix.outputs.build_matrix_last) == 1 && ' ' || matrix.build_params['key'] }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted #ubuntu-latest
     needs: calculate_matrix
     strategy:
       matrix:
