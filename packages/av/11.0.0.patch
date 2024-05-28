@@ -126,11 +126,11 @@ index 95203f3..65a72df 100644
 + int PFX(cpu_fast_neon_mrc_test)(void) { return 0; }
 + #endif // X265_ARCH_ARM
 ++
-++#if defined(LINKED_10BIT)
+++#if LINKED_10BIT
 ++int x265_10bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
 ++#endif // LINKED_10BIT
 ++
-++#if defined(LINKED_12BIT)
+++#if LINKED_12BIT
 ++int x265_12bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
 ++#endif // LINKED_12BIT
 + }
