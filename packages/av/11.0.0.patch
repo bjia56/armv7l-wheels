@@ -99,10 +99,10 @@ index 94644ea..3e75409 100644
  +	@echo "    [IMPLIB] $@"
  +CLEAN-OBJS += libvpx.dll.a
 diff --git a/patches/x265.patch b/patches/x265.patch
-index 95203f3..3584dc1 100644
+index 95203f3..65a72df 100644
 --- a/patches/x265.patch
 +++ b/patches/x265.patch
-@@ -266,3 +266,28 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
+@@ -266,3 +266,33 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
   /* fallback for older GCC/MinGW */
   static inline uint32_t __rdtsc(void)
   {
@@ -119,17 +119,22 @@ index 95203f3..3584dc1 100644
 +             else()
 +                 set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
 +diff -urN x265_3.5.orig/source/common/primitives.cpp x265_3.5/source/common/primitives.cpp
-+--- x265_3.5.orig/source/common/primitives.cpp	2024-05-27 08:04:34.904043547 -0400
-++++ x265_3.5/source/common/primitives.cpp	2024-05-27 08:08:50.504015396 -0400
-+@@ -295,7 +295,7 @@
-+ void PFX(cpu_cpuid)(uint32_t, uint32_t *eax, uint32_t *, uint32_t *, uint32_t *) { *eax = 0; }
-+ void PFX(cpu_xgetbv)(uint32_t, uint32_t *, uint32_t *) {}
-+ 
-+-#if X265_ARCH_ARM == 0
-++#if defined(LINKED_10BIT) && X265_ARCH_ARM != 0
++--- x265_3.5.orig/source/common/primitives.cpp	2024-05-28 09:43:17.114180434 -0400
+++++ x265_3.5/source/common/primitives.cpp	2024-05-28 09:54:13.524083371 -0400
++@@ -299,5 +299,13 @@
 + void PFX(cpu_neon_test)(void) {}
 + int PFX(cpu_fast_neon_mrc_test)(void) { return 0; }
 + #endif // X265_ARCH_ARM
+++
+++#if defined(LINKED_10BIT)
+++int x265_10bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
+++#endif // LINKED_10BIT
+++
+++#if defined(LINKED_12BIT)
+++int x265_12bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
+++#endif // LINKED_12BIT
++ }
++ #endif
 +
 diff --git a/scripts/build-ffmpeg.py b/scripts/build-ffmpeg.py
 index 1efcea5..38f7bfd 100644
