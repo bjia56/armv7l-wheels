@@ -67,8 +67,8 @@ jobs:
 
   build:
     name: Python ${{ inputs.python_version }} ${{ inputs.package }} ${{ inputs.version }} ${{ fromJSON(needs.calculate_matrix.outputs.build_matrix_last) == 1 && ' ' || matrix.build_params['key'] }}
-    runs-on: ${{ matrix.build_params['long'] && 'self-hosted' || 'ubuntu-latest' }}
-    timeout-minutes: ${{ matrix.build_params['long'] && 7200 || 360 }}
+    runs-on: ${{ matrix.build_params['extended'] && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: ${{ matrix.build_params['extended'] && 7200 || 360 }}
     needs: calculate_matrix
     strategy:
       matrix:

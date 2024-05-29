@@ -1,7 +1,7 @@
 strategy: dockerfile
 source:
 - file: ./Dockerfile
-  long: true
+  extended: true
 disable: true
 
 python:
