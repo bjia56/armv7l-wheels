@@ -99,16 +99,13 @@ index 94644ea..3e75409 100644
  +	@echo "    [IMPLIB] $@"
  +CLEAN-OBJS += libvpx.dll.a
 diff --git a/patches/x265.patch b/patches/x265.patch
-index 95203f3..65a72df 100644
+index 95203f3..8ff0f3f 100644
 --- a/patches/x265.patch
 +++ b/patches/x265.patch
-@@ -266,3 +266,33 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
-  /* fallback for older GCC/MinGW */
-  static inline uint32_t __rdtsc(void)
-  {
-+diff -urN x265_3.5/source/CMakeLists.txt x265_3.5.new/source/CMakeLists.txt
-+--- x265_3.5/source/CMakeLists.txt	2021-03-16 08:53:00.000000000 -0400
-++++ x265_3.5.new/source/CMakeLists.txt	2023-01-21 10:02:18.197996000 -0500
+@@ -23,6 +23,28 @@ diff -urN x265_3.5.orig/source/CMakeLists.txt x265_3.5/source/CMakeLists.txt
+              add_definitions(-DHAVE_NEON)
+          else()
+              find_package(Neon)
 +@@ -252,7 +252,7 @@
 +         else()
 +             find_package(Neon)
@@ -118,6 +115,26 @@ index 95203f3..65a72df 100644
 +                 add_definitions(-DHAVE_NEON)
 +             else()
 +                 set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++@@ -381,6 +385,12 @@
++     option(LINKED_8BIT  "8bit libx265 is being linked with this library" OFF)
++     option(LINKED_10BIT "10bit libx265 is being linked with this library" OFF)
++     option(LINKED_12BIT "12bit libx265 is being linked with this library" OFF)
+++    if(LINKED_10BIT)
+++        add_definitions(-DLINKED_10BIT=1)
+++    endif()
+++    if(LINKED_12BIT)
+++        add_definitions(-DLINKED_12BIT=1)
+++    endif()
++ endif(EXTRA_LIB)
++ mark_as_advanced(EXTRA_LIB EXTRA_LINK_FLAGS)
++ 
+ diff -urN x265_3.5.orig/source/common/aarch64/asm.S x265_3.5/source/common/aarch64/asm.S
+ --- x265_3.5.orig/source/common/aarch64/asm.S	2021-03-16 13:53:00.000000000 +0100
+ +++ x265_3.5/source/common/aarch64/asm.S	2022-02-22 10:13:49.991449401 +0100
+@@ -266,3 +288,21 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
+  /* fallback for older GCC/MinGW */
+  static inline uint32_t __rdtsc(void)
+  {
 +diff -urN x265_3.5.orig/source/common/primitives.cpp x265_3.5/source/common/primitives.cpp
 +--- x265_3.5.orig/source/common/primitives.cpp	2024-05-28 09:43:17.114180434 -0400
 ++++ x265_3.5/source/common/primitives.cpp	2024-05-28 09:54:13.524083371 -0400
