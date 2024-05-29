@@ -149,6 +149,7 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        if: ${{ matrix.build_params['key'] != fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
           path: /tmp/stage.tar
