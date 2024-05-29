@@ -17,7 +17,8 @@ if isinstance(buildspec.get("source"), str):
     out.append({
         "key": 1,
         "file": buildspec["source"],
-        "common": False
+        "common": False,
+        "long": False,
     })
 else:
     idx = 1
@@ -26,7 +27,8 @@ else:
             out.append({
                 "key": idx,
                 "file": source,
-                "common": False
+                "common": False,
+                "long": False,
             })
         else:
             out.append({
