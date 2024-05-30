@@ -22,8 +22,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release \
           -DARM_COMPUTE_SCONS_JOBS=4 \
           .. && \
     make -j4 
-RUN auditwheel show /openvino/build/wheels/openvino-*.whl && \
-    auditwheel repair /openvino/build/wheels/openvino-*.whl && \
+RUN auditwheel repair /openvino/build/wheels/openvino-*.whl && \
     pip3 install /openvino/build/wheelhouse/openvino-*manylinux*armv7l.whl --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary && \
     python3 -c "import openvino; print(openvino)"
 
