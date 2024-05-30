@@ -4,5 +4,5 @@ ARG VERSION
 ARG OUTPUT_DIR
 
 WORKDIR pyav-ffmpeg
-RUN python3.8 scripts/build-ffmpeg.py /tmp/vendor 2
+RUN ${FFMPEG_BUILD_CMD_PREFIX} 2
 WORKDIR ..
