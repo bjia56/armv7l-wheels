@@ -2,7 +2,6 @@ strategy: dockerfile
 source:
 - file: ./Dockerfile
   extended: true
-disable: true
 
 python:
   versions:
