@@ -1,0 +1,193 @@
+diff --git a/patches/aom.patch b/patches/aom.patch
+new file mode 100644
+index 0000000..9dec5b9
+--- /dev/null
++++ b/patches/aom.patch
+@@ -0,0 +1,16 @@
++diff -urN libaom2/build/cmake/toolchains/armv7-linux-gcc.cmake libaom/build/cmake/toolchains/armv7-linux-gcc.cmake
++--- libaom2/build/cmake/toolchains/armv7-linux-gcc.cmake	2021-10-14 14:05:43.000000000 -0400
+++++ libaom/build/cmake/toolchains/armv7-linux-gcc.cmake	2023-01-20 16:44:04.367380000 -0500
++@@ -25,9 +25,9 @@
++   set(AOM_EXTRA_TOOLCHAIN_FLAGS "-mfloat-abi=softfp")
++ endif()
++ 
++-set(CMAKE_C_COMPILER ${CROSS}gcc)
++-set(CMAKE_CXX_COMPILER ${CROSS}g++)
++-set(AS_EXECUTABLE ${CROSS}as)
+++#set(CMAKE_C_COMPILER ${CROSS}gcc)
+++#set(CMAKE_CXX_COMPILER ${CROSS}g++)
+++#set(AS_EXECUTABLE ${CROSS}as)
++ set(CMAKE_C_COMPILER_ARG1 "-march=armv7-a ${AOM_EXTRA_TOOLCHAIN_FLAGS}")
++ set(CMAKE_CXX_COMPILER_ARG1 "-march=armv7-a ${AOM_EXTRA_TOOLCHAIN_FLAGS}")
++ set(AOM_AS_FLAGS --defsym ARCHITECTURE=7 -march=armv7-a -mfpu=neon
+diff --git a/patches/vpx.patch b/patches/vpx.patch
+index 94644ea..3e75409 100644
+--- a/patches/vpx.patch
++++ b/patches/vpx.patch
+@@ -12,7 +12,7 @@
+ @@ -336,6 +336,20 @@
+          $$(filter %.o,$$^) $$(extralibs) $$(EXPORTS_FILE)
+  endef
+- 
++
+ +define dll_gnu_template
+ +# Not using a pattern rule here because we don't want to generate empty
+ +# archives when they are listed as a dependency in files not responsible
+@@ -27,7 +27,7 @@
+ +            -Wl,--out-implib=$$(subst $(2),.dll.a,$(1)) $$(filter %.o,$$^) $$(extralibs)
+ +endef
+ +
+- 
++
+  #
+  # Get current configuration
+ @@ -395,6 +409,7 @@
+@@ -35,7 +35,7 @@
+  $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dylib,$(LIBS)),$(eval $(call dl_template,$(lib))))
+  $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dll,$(LIBS)),$(eval $(call dll_template,$(lib))))
+ +$(foreach lib,$(filter %-$(VERSION_MAJOR).dll,$(LIBS)),$(eval $(call dll_gnu_template,$(lib),-$(VERSION_MAJOR).dll)))
+- 
++
+  INSTALL-LIBS=$(call cond_enabled,CONFIG_INSTALL_LIBS,INSTALL-LIBS)
+  ifeq ($(MAKECMDGOALS),dist)
+ --- libvpx-1.11.0.orig/build/make/configure.sh  	2021-10-06 19:41:19.000000000 +0200
+@@ -65,8 +65,17 @@
+ +    die "Bindir ${bindir} must be a subdirectory of ${prefix}"
+ +  fi
+  }
+- 
++
+  post_process_cmdline() {
++@@ -748,7 +748,7 @@
++       aarch64*)
++         tgt_isa=arm64
++         ;;
++-      armv7*-hardfloat* | armv7*-gnueabihf | arm-*-gnueabihf)
+++      armv7*-hardfloat* | armv7h* | armv7*-gnueabihf | arm-*-gnueabihf)
++         tgt_isa=armv7
++         float_abi=hard
++         ;;
+ --- libvpx-1.11.0.orig/configure	2021-10-06 19:41:19.000000000 +0200
+ +++ libvpx-1.11.0/configure         2022-03-29 19:54:58.000000000 +0200
+ @@ -501,6 +501,7 @@
+@@ -74,9 +83,9 @@
+  endif
+  LIBSUBDIR=${libdir##${prefix}/}
+ +BINSUBDIR=${bindir##${prefix}/}
+- 
++
+  VERSION_STRING=${VERSION_STRING}
+- 
++
+ @@ -539,6 +540,8 @@
+          *)
+              if enabled gnu; then
+@@ -115,13 +124,13 @@
+  endif
+  endif
+ +endif
+- 
++
+  LIBS-$(CONFIG_SHARED) += $(BUILD_PFX)$(LIBVPX_SO)\
+                             $(notdir $(LIBVPX_SO_SYMLINKS)) \
+ @@ -353,6 +362,10 @@ libvpx_dll.a: $(LIBVPX_SO)
+  	$(qexec)emximp -o $@ $<
+  CLEAN-OBJS += libvpx_dll.a
+- 
++
+ +libvpx.dll.a: $(LIBVPX_SO)
+ +	@echo "    [IMPLIB] $@"
+ +CLEAN-OBJS += libvpx.dll.a
+diff --git a/patches/x265.patch b/patches/x265.patch
+index 95203f3..4857f19 100644
+--- a/patches/x265.patch
++++ b/patches/x265.patch
+@@ -23,6 +23,28 @@ diff -urN x265_3.5.orig/source/CMakeLists.txt x265_3.5/source/CMakeLists.txt
+              add_definitions(-DHAVE_NEON)
+          else()
+              find_package(Neon)
++@@ -252,7 +252,7 @@
++         else()
++             find_package(Neon)
++             if(CPU_HAS_NEON)
++-                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
+++                set(ARM_ARGS -mcpu=cortex-a8 -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++                 add_definitions(-DHAVE_NEON)
++             else()
++                 set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++@@ -381,6 +385,12 @@
++     option(LINKED_8BIT  "8bit libx265 is being linked with this library" OFF)
++     option(LINKED_10BIT "10bit libx265 is being linked with this library" OFF)
++     option(LINKED_12BIT "12bit libx265 is being linked with this library" OFF)
+++    if(LINKED_10BIT)
+++        add_definitions(-DLINKED_10BIT=1)
+++    endif()
+++    if(LINKED_12BIT)
+++        add_definitions(-DLINKED_12BIT=1)
+++    endif()
++ endif(EXTRA_LIB)
++ mark_as_advanced(EXTRA_LIB EXTRA_LINK_FLAGS)
++ 
+ diff -urN x265_3.5.orig/source/common/aarch64/asm.S x265_3.5/source/common/aarch64/asm.S
+ --- x265_3.5.orig/source/common/aarch64/asm.S	2021-03-16 13:53:00.000000000 +0100
+ +++ x265_3.5/source/common/aarch64/asm.S	2022-02-22 10:13:49.991449401 +0100
+@@ -266,3 +288,25 @@ diff -urN x265_3.5.orig/source/test/testharness.h x265_3.5/source/test/testharne
+  /* fallback for older GCC/MinGW */
+  static inline uint32_t __rdtsc(void)
+  {
++diff -urN x265_3.5.orig/source/common/primitives.cpp x265_3.5/source/common/primitives.cpp
++--- x265_3.5.orig/source/common/primitives.cpp	2024-05-28 09:43:17.114180434 -0400
+++++ x265_3.5/source/common/primitives.cpp	2024-05-28 09:54:13.524083371 -0400
++@@ -299,5 +299,17 @@
++ void PFX(cpu_neon_test)(void) {}
++ int PFX(cpu_fast_neon_mrc_test)(void) { return 0; }
++ #endif // X265_ARCH_ARM
+++
+++#if LINKED_10BIT || LINKED_12BIT
+++extern int x265_cpu_fast_neon_mrc_test(void);
+++#endif
+++
+++#if LINKED_10BIT
+++int x265_10bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
+++#endif // LINKED_10BIT
+++
+++#if LINKED_12BIT
+++int x265_12bit_cpu_fast_neon_mrc_test(void) { return x265_cpu_fast_neon_mrc_test(); }
+++#endif // LINKED_12BIT
++ }
++ #endif
++
+diff --git a/scripts/build-ffmpeg.py b/scripts/build-ffmpeg.py
+index 1efcea5..38f7bfd 100644
+--- a/scripts/build-ffmpeg.py
++++ b/scripts/build-ffmpeg.py
+@@ -59,7 +59,7 @@ if not os.path.exists(output_tarball):
+             run(["where", tool])
+ 
+     with log_group("install python packages"):
+-        run(["pip", "install", "cmake", "meson", "ninja"])
++        run(["pip", "install", "meson"])
+ 
+     # build tools
+ 
+@@ -195,6 +195,7 @@ if not os.path.exists(output_tarball):
+                 "-DENABLE_EXAMPLES=0",
+                 "-DENABLE_TESTS=0",
+                 "-DENABLE_TOOLS=0",
++                f"-DCMAKE_TOOLCHAIN_FILE={os.path.join(builder.build_dir, 'aom')}/build/cmake/toolchains/armv7-linux-gcc.cmake",
+             ],
+             build_parallel=False,
+         ),
+diff --git a/scripts/cibuildpkg.py b/scripts/cibuildpkg.py
+index fbc7081..ef569c9 100644
+--- a/scripts/cibuildpkg.py
++++ b/scripts/cibuildpkg.py
+@@ -85,7 +85,7 @@ def make_args(*, parallel: bool) -> List[str]:
+     args = []
+ 
+     # do not parallelize build when running in qemu
+-    if parallel and platform.machine() not in ("aarch64", "ppc64le", "s390x"):
++    if parallel and platform.machine() not in ("aarch64", "ppc64le", "s390x", "armv7l"):
+         args.append("-j")
+ 
+     return args
