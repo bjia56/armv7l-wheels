@@ -3,12 +3,15 @@ ARG VERSION
 
 FROM base AS ver-9.2.0
 ENV FFMPEG_BUILD_VER=4.4.1-7
+ENV FFMPEG_BUILD_CMD_PREFIX="python3.8 scripts/build-ffmpeg.py /tmp/vendor"
 
 FROM base AS ver-11.0.0
 ENV FFMPEG_BUILD_VER=6.0.0-1
+ENV FFMPEG_BUILD_CMD_PREFIX="python3.8 scripts/build-ffmpeg.py /tmp/vendor"
 
 FROM base AS ver-12.0.0
 ENV FFMPEG_BUILD_VER=6.1.1-1
+ENV FFMPEG_BUILD_CMD_PREFIX="python3.8 scripts/build-ffmpeg.py /tmp/vendor --stage"
 
 
 FROM ver-${VERSION}
@@ -29,5 +32,5 @@ ENV CIBUILDWHEEL=1
 COPY *.patch .
 WORKDIR pyav-ffmpeg
 RUN git apply ../${VERSION}.patch; exit 0
-RUN python3.8 scripts/build-ffmpeg.py /tmp/vendor 1
+RUN ${FFMPEG_BUILD_CMD_PREFIX} 1
 WORKDIR ..
