@@ -42,12 +42,12 @@ jobs:
       - name: Print input arguments
         run: echo "${{ toJSON(github.event.inputs) }}"
 
-      - uses: mukunku/tag-exists-action@v1.2.0
+      - uses: mukunku/tag-exists-action@v1.6.0
         id: check-tag
         with:
           tag: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
 
-      - uses: nick-fields/assert-action@v1
+      - uses: nick-fields/assert-action@v2
         with:
           expected: "false"
           actual: "${{ steps.check-tag.outputs.exists }}"
@@ -79,13 +79,13 @@ jobs:
       contents: write
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.package }}-${{ inputs.version}}-cpython${{ inputs.python_version }}
           path: /tmp/wheelhouse/
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: /tmp/wheelhouse/*.whl
           tag_name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
@@ -99,14 +99,14 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Pull latest
         run: |
           git pull
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -129,3 +129,5 @@ jobs:
     needs: update-pypi
     if: ${{ always() }}
     uses: ./.github/workflows/pages.yml
+    with:
+      build_triplet: "${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}"

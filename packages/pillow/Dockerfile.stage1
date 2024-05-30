@@ -1,0 +1,16 @@
+FROM ghcr.io/bjia56/armv7l-wheel-builder:main
+
+RUN yum install -y libX11-devel
+RUN yum remove -y zlib-devel
+
+ENV PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH
+
+WORKDIR /
+RUN git clone https://github.com/python-pillow/Pillow.git && \
+    cd Pillow && \
+    git checkout main && \
+    git submodule update --init --recursive && \
+    export BUILD_PREFIX="/usr/local" && \
+    ./.github/workflows/wheels-dependencies.sh && \
+    cd .. && \
+    rm -rf Pillow

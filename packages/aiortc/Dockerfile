@@ -13,7 +13,7 @@ COPY *.patch .
 WORKDIR aiortc-codecs
 ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
 ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
-ENV LD=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
 RUN git apply ../${VERSION}.patch
 RUN python3.8 scripts/build-codecs.py /tmp/vendor
 WORKDIR ..

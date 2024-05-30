@@ -1,0 +1,17 @@
+FROM base
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
+
+COPY . /repo
+
+ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig
+ENV LDFLAGS -L/usr/local/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+RUN mkdir -p /Pillow
+WORKDIR /Pillow
+RUN /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+
+RUN mkdir -p ${OUTPUT_DIR} && \
+    cp build${PYTHON_VERSION}/wheelhouse/pillow*manylinux*armv7l.whl ${OUTPUT_DIR}

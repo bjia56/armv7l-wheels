@@ -3,12 +3,18 @@ ARG PYTHON_VERSION
 ARG VERSION
 ARG OUTPUT_DIR
 
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
+
 WORKDIR /
+RUN select_python ${PYTHON_VERSION} 
 RUN wget https://github.com/aiortc/pylibsrtp/archive/refs/tags/${VERSION}.tar.gz && \
     tar xf ${VERSION}.tar.gz && \
     cd pylibsrtp-${VERSION} && \
     mkdir -p /tmp/vendor && \
-    python3.8 scripts/build-libsrtp.py /tmp/vendor
+    python scripts/build-libsrtp.py /tmp/vendor
 
 ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include'
 ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib'
