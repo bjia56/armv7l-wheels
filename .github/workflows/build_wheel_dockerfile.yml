@@ -127,7 +127,7 @@ jobs:
       - name: Calculate cache tag (common)
         if: ${{ matrix.build_params['common'] }}
         run: |
-          echo "CACHE_TAG=${{ github.ref }}-${{ inputs.package }}-common-${{ matrix.build_params['key'] }}" >> $GITHUB_ENV
+          echo "CACHE_TAG=${{ github.ref }}-${{ inputs.package }}-${{ inputs.version }}-common-${{ matrix.build_params['key'] }}" >> $GITHUB_ENV
 
       - name: Build wheels via Docker
         uses: docker/build-push-action@v5
