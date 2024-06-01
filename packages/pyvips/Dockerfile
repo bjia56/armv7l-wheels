@@ -6,12 +6,12 @@ ARG OUTPUT_DIR
 WORKDIR /
 RUN select_python ${PYTHON_VERSION}
 RUN pip3 install meson
-RUN yum -y install glib2-devel expat-devel libjpeg-devel libpng-devel openjpeg-devel libtiff-devel libheif-devel libwebp-devel librsvg2-devel 
+RUN yum -y install glib2-devel expat-devel libjpeg-devel libpng-devel libtiff-devel librsvg2-devel 
 RUN mkdir -p /tmp/vendor
 RUN wget -q https://github.com/libvips/libvips/releases/download/v8.15.2/vips-8.15.2.tar.xz && \
     tar xf vips-*.tar.xz && \
     cd vips-* && \
-    meson setup build --prefix=/tmp/vendor && \
+    meson setup build --prefix=/tmp/vendor --default-library static && \
     cd build && \
     meson compile && \
     meson install
