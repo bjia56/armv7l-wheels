@@ -11,6 +11,7 @@ RUN wget -q https://github.com/libvips/libvips/releases/download/v8.15.2/vips-8.
     tar xf vips-*.tar.xz && \
     cd vips-* && \
     meson setup build --prefix=/vips && \
+    cd build && \
     meson compile && \
     meson install
 
