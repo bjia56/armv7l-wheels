@@ -1,0 +1,16 @@
+FROM ghcr.io/bjia56/armv7l-wheel-builder:main
+ARG PYTHON_VERSION
+
+WORKDIR /
+RUN select_python ${PYTHON_VERSION}
+RUN pip3 install meson
+RUN yum -y install glib2-devel expat-devel libjpeg-devel libpng-devel libtiff-devel 
+RUN mkdir -p /tmp/vendor
+RUN wget -q https://github.com/libvips/libvips/releases/download/v8.15.2/vips-8.15.2.tar.xz && \
+    tar xf vips-*.tar.xz && \
+    cd vips-* && \
+    meson setup build --prefix=/tmp/vendor --default-library static && \
+    cd build && \
+    meson compile && \
+    meson install
+
