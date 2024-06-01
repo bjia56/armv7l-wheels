@@ -11,7 +11,7 @@ RUN mkdir -p /tmp/vendor
 RUN wget -q https://github.com/libvips/libvips/releases/download/v8.15.2/vips-8.15.2.tar.xz && \
     tar xf vips-*.tar.xz && \
     cd vips-* && \
-    meson setup build --prefix=/vips && \
+    meson setup build --prefix=/tmp/vendor && \
     cd build && \
     meson compile && \
     meson install
