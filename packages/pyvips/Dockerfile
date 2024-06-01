@@ -5,6 +5,7 @@ ARG OUTPUT_DIR
 
 RUN select_python ${PYTHON_VERSION}
 RUN pip3 install meson
+RUN yum -y install glib2-devel
 RUN mkdir /vips
 RUN wget -q https://github.com/libvips/libvips/releases/download/v8.15.2/vips-8.15.2.tar.xz && \
     tar xf vips-*.tar.xz && \
