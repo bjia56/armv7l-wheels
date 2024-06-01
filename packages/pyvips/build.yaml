@@ -1,8 +1,6 @@
 strategy: dockerfile
 source:
-  - file: ./Dockerfile.stage1
-    common: true
-  - file: ./Dockerfile.stage2
+- ./Dockerfile
 
 python:
   versions:
