@@ -1,0 +1,25 @@
+FROM base
+ARG PYTHON_VERSION
+ARG VERSION
+ARG OUTPUT_DIR
+
+ENV CFLAGS='-I/usr/local/ssl/include -I/tmp/vendor/include'
+ENV LDFLAGS='-L/usr/local/ssl/lib -L/tmp/vendor/lib'
+ENV LD_LIBRARY_PATH=/tmp/vendor/lib:/usr/local/ssl/lib:$LD_LIBRARY_PATH
+ENV PKG_CONFIG_PATH=/tmp/vendor/lib/pkgconfig:/usr/local/ssl/lib/pkgconfig
+
+ENV CC=/opt/rh/devtoolset-10/root/usr/bin/gcc
+ENV FC=/opt/rh/devtoolset-10/root/usr/bin/gfortran5
+ENV CXX=/opt/rh/devtoolset-10/root/usr/bin/g++
+ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
+
+COPY . /repo
+
+RUN mkdir /scipy
+WORKDIR /scipy
+RUN select_python ${PYTHON_VERSION}
+RUN pip3 install setuptools==49.2.0
+RUN export OPENBLAS=/tmp/vendor && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+
+RUN mkdir -p ${OUTPUT_DIR} && \
+    cp build${PYTHON_VERSION}/wheelhouse/scipy*manylinux*armv7l.whl ${OUTPUT_DIR}

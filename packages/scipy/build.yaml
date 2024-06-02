@@ -1,0 +1,15 @@
+strategy: dockerfile
+source:
+- file: ./Dockerfile.stage1
+  common: true
+- file: ./Dockerfile.stage2
+
+python:
+  versions:
+  - "3.9"
+  - "3.10"
+  - "3.11"
+  - "3.12"
+
+package:
+  versions: latest
