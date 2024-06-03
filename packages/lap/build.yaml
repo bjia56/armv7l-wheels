@@ -1,4 +1,6 @@
-strategy: pypi
+strategy: dockerfile
+source:
+- file: ./Dockerfile
 
 python:
   versions:
