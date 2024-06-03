@@ -21,4 +21,4 @@ RUN auditwheel repair lap-*.whl && \
     python3 -c "import lap; print(lap)"
 
 RUN mkdir -p ${OUTPUT_DIR} && \
-    cp ./wheelhouse/openvino-*manylinux*armv7l.whl ${OUTPUT_DIR}
+    cp ./wheelhouse/lap-*manylinux*armv7l.whl ${OUTPUT_DIR}
