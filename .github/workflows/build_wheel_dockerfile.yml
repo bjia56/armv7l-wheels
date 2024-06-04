@@ -93,6 +93,11 @@ jobs:
         with:
           driver-opts: network=host
 
+      - name: Create scoped tmpdir
+        run: |
+          mkdir -p /tmp/gha-run-${{ github.run_id }}-${{ github.run_attempt }}
+          echo "GHA_TMPDIR=/tmp/gha-run-${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+
       - name: Calculate previous build number
         if: ${{ matrix.build_params['key'] != 1 }}
         run: |
@@ -103,14 +108,14 @@ jobs:
         if: ${{ matrix.build_params['key'] != 1 }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ env.PREVIOUS }}
-          path: /tmp
+          path: ${{ env.GHA_TMPDIR }}
 
       - name: Load image
         if: ${{ matrix.build_params['key'] != 1 }}
         run: |
-          docker load --input /tmp/stage.tar
+          docker load --input ${{ env.GHA_TMPDIR }}/stage.tar
           docker image ls -a
-          rm /tmp/stage.tar
+          rm ${{ env.GHA_TMPDIR }}/stage.tar
 
       - name: Push image to local registry
         if: ${{ matrix.build_params['key'] != 1 }}
@@ -145,30 +150,35 @@ jobs:
           tags: armv7l:latest
           cache-from: type=gha,scope=${{ env.CACHE_TAG }}
           cache-to: type=gha,mode=max,scope=${{ env.CACHE_TAG }}
-          outputs: type=docker,dest=/tmp/stage.tar
+          outputs: type=docker,dest=${{ env.GHA_TMPDIR }}/stage.tar
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         if: ${{ matrix.build_params['key'] != fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}-dockerstage${{ matrix.build_params['key'] }}
-          path: /tmp/stage.tar
+          path: ${{ env.GHA_TMPDIR }}/stage.tar
 
       - name: Load image
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         run: |
-          docker load --input /tmp/stage.tar
+          docker load --input ${{ env.GHA_TMPDIR }}/stage.tar
           docker image ls -a
-          rm /tmp/stage.tar
+          rm ${{ env.GHA_TMPDIR }}/stage.tar
 
       - name: Extract output
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         run: |
-          docker run -v /tmp/output:/host armv7l:latest bash -c "cp /export/* /host/"
+          docker run -v ${{ env.GHA_TMPDIR }}/output:/host armv7l:latest bash -c "cp /export/* /host/"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ matrix.build_params['key'] == fromJSON(needs.calculate_matrix.outputs.build_matrix_last) }}
         with:
           name: ${{ inputs.package }}-${{ inputs.version }}-cpython${{ inputs.python_version }}
-          path: /tmp/output/*.whl
+          path: ${{ env.GHA_TMPDIR }}/output/*.whl
+
+      - name: Remove scoped tmpdir
+        if: ${{ always() }}
+        run: |
+          sudo rm -rf ${{ env.GHA_TMPDIR }}
