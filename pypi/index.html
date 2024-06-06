@@ -8,6 +8,19 @@
   <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" rel="stylesheet"/>
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&amp;display=swap" rel="stylesheet" type="text/css"/>
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+		function sortCards() {
+			const cards = Array.from(document.querySelectorAll('a.card'));
+			cards.sort((a, b) => a.textContent.localeCompare(b.textContent));
+			const parent = cards[0].parentNode;
+			cards.forEach(card => parent.removeChild(card));
+			cards.forEach(card => parent.appendChild(card));
+		}
+
+		sortCards();
+	});
+  </script>
   <style>
    body { font-family: "Montserrat"; }
 		code {
@@ -145,6 +158,18 @@
    </a>
    <a class="card" href="zeroconf/">
     zeroconf
+   </a>
+   <a class="card" href="matplotlib/">
+    matplotlib
+   </a>
+   <a class="card" href="openvino/">
+    openvino
+   </a>
+   <a class="card" href="lap/">
+    lap
+   </a>
+   <a class="card" href="lapx/">
+    lapx
    </a>
   </div>
  </body>
