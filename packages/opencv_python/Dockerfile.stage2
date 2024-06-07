@@ -1,7 +1,7 @@
 FROM base
 
-RUN curl -O -L https://download.qt.io/official_releases/qt/5.15/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz && \
-    tar -xf qt-everywhere-src-${QT_VERSION}.tar.xz && \
+RUN curl -C - -O -L https://download.qt.io/archive/qt/5.15/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz && \
+    tar -xf qt-everywhere-opensource-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     export MAKEFLAGS=-j$(nproc) && \
     export PREV_PATH=$PATH && \
