@@ -14,5 +14,5 @@ RUN select_python ${PYTHON_VERSION}
 RUN python3 -m pip install numpy --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
 RUN git clone --recurse-submodules -j4 --single-branch --branch=v${VERSION} https://github.com/Microsoft/onnxruntime.git
 WORKDIR onnxruntime
-RUN ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --build_wheel --allow_running_as_root
+RUN ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --skip_tests --build_wheel --allow_running_as_root
 RUN find .
