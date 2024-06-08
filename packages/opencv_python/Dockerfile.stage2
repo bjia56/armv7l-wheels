@@ -1,9 +1,7 @@
-# adapted from https://github.com/opencv/opencv-python/blob/e26e6e4611b40ea5344e4e4b6e2467539a07a11f/docker/manylinux2014/Dockerfile_aarch64
-
 FROM base
 
-RUN curl -O -L https://download.qt.io/official_releases/qt/5.15/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz && \
-    tar -xf qt-everywhere-src-${QT_VERSION}.tar.xz && \
+RUN curl -C - -O -L https://download.qt.io/archive/qt/5.15/${QT_VERSION}/single/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz && \
+    tar -xf qt-everywhere-opensource-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     export MAKEFLAGS=-j$(nproc) && \
     export PREV_PATH=$PATH && \
