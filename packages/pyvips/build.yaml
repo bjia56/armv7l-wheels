@@ -14,5 +14,4 @@ python:
   - "3.12"
 
 package:
-  versions:
-  - latest
+  versions: latest
