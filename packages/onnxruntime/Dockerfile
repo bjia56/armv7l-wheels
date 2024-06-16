@@ -10,6 +10,7 @@ ENV LD=/opt/rh/devtoolset-10/root/usr/bin/ld
 ENV PATH=/opt/rh/devtoolset-10/root/usr/bin:$PATH
 
 WORKDIR /
+RUN pip3.8 install cmake==3.29.5.1 --extra-index-url https://bjia56.github.io/armv7l-wheels/
 RUN select_python ${PYTHON_VERSION}
 RUN python3 -m pip install numpy --extra-index-url https://bjia56.github.io/armv7l-wheels/ --prefer-binary
 RUN git clone --recurse-submodules -j4 --single-branch --branch=v${VERSION} https://github.com/Microsoft/onnxruntime.git
