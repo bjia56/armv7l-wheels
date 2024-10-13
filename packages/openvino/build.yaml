@@ -1,4 +1,6 @@
 strategy: dockerfile
+disable: true
+
 source:
 - file: ./Dockerfile
   extended: true
