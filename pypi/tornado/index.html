@@ -33,9 +33,10 @@
   <title>
    PyPI - Python Wheels for armv7l
   </title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+  </script>
   <script>
-    function annotateDownloadCount(releaseTag, anchorElement) {
+   function annotateDownloadCount(releaseTag, anchorElement) {
       fetch("https://api.github.com/repos/bjia56/armv7l-wheels/releases/tags/" + releaseTag)
       .then(async resp => {
         let release = await resp.json();
@@ -52,17 +53,21 @@
     $(document).ready(annotateAll);
   </script>
  </head>
-  <body>
-   <div class="container">
-    <section class="header">
-     tornado
-    </section>
-    <pre><code>pip install tornado --extra-index-url https://bjia56.github.io/armv7l-wheels/</code></pre>
-    <br/>
-    <a href="https://github.com/bjia56/armv7l-wheels/releases/download/tornado-6.4.1-cpython3.9/tornado-6.4.1-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
-      tornado-6.4.1-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
-    </a>
-    <hr/>
+ <body>
+  <div class="container">
+   <section class="header">
+    tornado
+   </section>
+   <pre><code>pip install tornado --extra-index-url https://bjia56.github.io/armv7l-wheels/</code></pre>
+   <br/>
+   <a href="https://github.com/bjia56/armv7l-wheels/releases/download/tornado-6.4.1-cpython3.9/tornado-6.4.1-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
+    tornado-6.4.1-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
+   </a>
+   <br/>
+   <a href="https://github.com/bjia56/armv7l-wheels/releases/download/tornado-6.4.2-cpython3.9/tornado-6.4.2-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl">
+    tornado-6.4.2-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
+   </a>
+   <hr/>
   </div>
  </body>
 </html>
