@@ -1,8 +1,8 @@
 strategy: pypi
-disable: true
+
 python:
   versions:
-  - "3.7"
+  - "3.9"
 
 package:
   versions: latest
