@@ -19,7 +19,7 @@ RUN mkdir /numpy
 WORKDIR /numpy
 RUN select_python ${PYTHON_VERSION}
 RUN pip3 install setuptools==49.2.0
-RUN export OPENBLAS=/tmp/vendor && /repo/armv7l_build_wheels.sh ${PYTHON_VERSION} ${VERSION}
+RUN export OPENBLAS=/tmp/vendor && /repo/armv7l_build_wheels.sh numpy ${PYTHON_VERSION} ${VERSION}
 
 RUN mkdir -p ${OUTPUT_DIR} && \
     cp build${PYTHON_VERSION}/wheelhouse/numpy*manylinux*armv7l.whl ${OUTPUT_DIR}
