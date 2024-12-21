@@ -1,31 +1,34 @@
 #!/bin/bash
 
-PYTHON3_VERSION=$1
-PACKAGE_VERSION=$2
+PACKAGE=$1
+PYTHON3_VERSION=$2
+PACKAGE_VERSION=$3
 
 set -e
 
+WORKDIR=$(pwd)
+select_python $PYTHON3_VERSION
+mkdir build${PYTHON3_VERSION}
+
 build_wheel() (
-    PY_VER=$1
-    VER=$2
-    mkdir build$PY_VER
-    cd build$PY_VER
-    pip$PY_VER wheel --no-deps numpy==$VER
+    cd ${WORKDIR}
+    cd build${PYTHON3_VERSION}
+    pip3 wheel --no-deps ${PACKAGE}==${PACKAGE_VERSION}
 )
 
 test_wheel() (
-    PY_VER=$1
-    cd build$PY_VER
-    pip$PY_VER install wheelhouse/numpy*manylinux*armv7l.whl
-    python$PY_VER -c "import numpy; print(numpy)"
+    cd ${WORKDIR}
+    cd build${PYTHON3_VERSION}
+    pip3 install wheelhouse/${PACKAGE}*manylinux*armv7l.whl
+    python3 -c "import ${PACKAGE}; print(${PACKAGE})"
 )
 
 repair_wheel() (
-    PY_VER=$1
-    cd build$PY_VER
+    cd ${WORKDIR}
+    cd build${PYTHON3_VERSION}
     auditwheel repair numpy*armv7l.whl
 )
 
-build_wheel $PYTHON3_VERSION $PACKAGE_VERSION
-repair_wheel $PYTHON3_VERSION
-test_wheel $PYTHON3_VERSION
+build_wheel
+repair_wheel
+test_wheel
