@@ -43,7 +43,7 @@ RUN mkdir ~/libpng_sources && \
 
 RUN mkdir ~/freetype_sources && \
     cd ~/freetype_sources && \
-    curl -O -L https://github.com/bjia56/armv7l-wheels/releases/download/build-dependency-archives/freetype-${FREETYPE_VERSION}.tar.gz && \
+    curl -O -L https://github.com/bjia56/build-dependencies/releases/download/armv7l-wheels/freetype-${FREETYPE_VERSION}.tar.gz && \
     tar -xf freetype-${FREETYPE_VERSION}.tar.gz && \
     cd freetype-${FREETYPE_VERSION} && \
     ./configure --prefix="/ffmpeg_build" --enable-freetype-config && \
