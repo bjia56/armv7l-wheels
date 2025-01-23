@@ -478,7 +478,7 @@ index 1788e6b..e59e3d7 100644
          Package(
              name="gmp",
 -            source_url="https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz",
-+            source_url="https://github.com/bjia56/armv7l-wheels/releases/download/build-dependency-archives/gmp-6.2.1.tar.xz",
++            source_url="https://github.com/bjia56/build-dependencies/releases/download/armv7l-wheels/gmp-6.2.1.tar.xz",
              # out-of-tree builds fail on Windows
              build_dir=".",
          ),
