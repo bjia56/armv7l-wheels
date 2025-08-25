@@ -1,4 +1,5 @@
 strategy: dockerfile
+disable: true
 source:
 - file: ./Dockerfile.stage1
   common: true
